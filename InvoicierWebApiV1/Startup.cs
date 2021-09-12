@@ -1,9 +1,11 @@
 using InvoicierWebApiV1.Infrastructure;
+using InvoicierWebApiV1.Service.OrganizationServices;
 using InvoicierWebApiV1.Service.UserServiceInterfaces;
 using InvoicierWebApiV1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,7 +29,9 @@ namespace InvoicierWebApiV1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
+            //var configString 
+            services.AddDbContext<InvoicierDbContext>(options => 
+            options.UseSqlServer(Configuration.GetConnectionString("InvoicierConnection")));
             var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
             services.AddSingleton(jwtTokenConfig);
             services.AddAuthentication(x =>
@@ -53,6 +57,8 @@ namespace InvoicierWebApiV1
             services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
             services.AddHostedService<JwtRefreshTokenCache>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IOrganizationServices, OrganizationService>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvoicierWebApiV1", Version = "v1" });
@@ -76,7 +82,7 @@ namespace InvoicierWebApiV1
                     {securityScheme, new string[] { }}
                 });
 
-            });
+            }); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
