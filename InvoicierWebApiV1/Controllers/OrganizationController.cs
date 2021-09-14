@@ -4,14 +4,12 @@ using InvoicierWebApiV1.Dtos;
 using InvoicierWebApiV1.Service.OrganizationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace InvoicierWebApiV1.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/Organizations")]
     public class OrganizationController : ControllerBase
     {

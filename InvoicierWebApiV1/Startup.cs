@@ -29,9 +29,10 @@ namespace InvoicierWebApiV1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            //var configString 
+
+            var configString = Configuration.GetConnectionString("InvoicierConnection");
             services.AddDbContext<InvoicierDbContext>(options => 
-            options.UseSqlServer(Configuration.GetConnectionString("InvoicierConnection")));
+            options.UseSqlServer(configString));
             var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
             services.AddSingleton(jwtTokenConfig);
             services.AddAuthentication(x =>
