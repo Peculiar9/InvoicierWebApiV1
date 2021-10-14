@@ -1,10 +1,10 @@
-using InvoicierWebApiV1.Infrastructure;
+using InvoicierWebApiV1.Data.AuthModels;
 using InvoicierWebApiV1.Service.OrganizationServices;
-using InvoicierWebApiV1.Service.UserServiceInterfaces;
 using InvoicierWebApiV1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,32 +33,72 @@ namespace InvoicierWebApiV1
             var configString = Configuration.GetConnectionString("InvoicierConnection");
             services.AddDbContext<InvoicierDbContext>(options => 
             options.UseSqlServer(configString));
-            var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
-            services.AddSingleton(jwtTokenConfig);
-            services.AddAuthentication(x =>
+             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = true;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
+                options.Password.RequiredLength = 8;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireDigit = false;
+                options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = false;
+
+
+            })
+                .AddEntityFrameworkStores<InvoicierDbContext>()
+                .AddDefaultTokenProviders();
+
+            //AuthenticationService
+            services.AddAuthentication(options => {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
                 {
-                    ValidateIssuer = true,
-                    ValidIssuer = jwtTokenConfig.Issuer,
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.Secret)),
-                    ValidAudience = jwtTokenConfig.Audience,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromMinutes(1)
-                };
-            });
-            services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
-            services.AddHostedService<JwtRefreshTokenCache>();
-            services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IOrganizationServices, OrganizationService>();
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = true;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["JWT:ValidAudience"],
+                        ValidIssuer = Configuration["JWT:ValidIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:SecretKey"]))
+
+                    };
+                });
+            
+             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+             services.AddScoped<IOrganizationServices, MockOrganizationService>();
+             
+            //  services.AddScoped<IRepositoryServices, ImageServiceRepo>();
+            // var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
+            // services.AddSingleton(jwtTokenConfig);
+            // services.AddAuthentication(x =>
+            // {
+            //     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            // }).AddJwtBearer(x =>
+            // {
+            //     x.RequireHttpsMetadata = true;
+            //     x.SaveToken = true;
+            //     x.TokenValidationParameters = new TokenValidationParameters
+            //     {
+            //         ValidateIssuer = true,
+            //         ValidIssuer = jwtTokenConfig.Issuer,
+            //         ValidateIssuerSigningKey = true,
+            //         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtTokenConfig.Secret)),
+            //         ValidAudience = jwtTokenConfig.Audience,
+            //         ValidateAudience = true,
+            //         ValidateLifetime = true,
+            //         ClockSkew = TimeSpan.FromMinutes(1)
+            //     };
+            // });
+            // services.AddSingleton<IJwtAuthManager, JwtAuthManager>();
+            // services.AddHostedService<JwtRefreshTokenCache>();
+            // services.AddScoped<IUserService, UserService>();
+            // services.AddScoped<IOrganizationServices, OrganizationService>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
             {
@@ -101,7 +141,7 @@ namespace InvoicierWebApiV1
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
