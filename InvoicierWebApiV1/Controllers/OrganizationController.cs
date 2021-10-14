@@ -5,10 +5,13 @@ using InvoicierWebApiV1.Service.OrganizationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+//using static InvoicierWebApiV1.Services.UserService;
 
 namespace InvoicierWebApiV1.Controllers
 {
+
     [ApiController]
+    //[Authorize(Roles = UserRoles.Admin)]
     [Authorize]
     [Route("api/Organizations")]
     public class OrganizationController : ControllerBase
@@ -17,7 +20,7 @@ namespace InvoicierWebApiV1.Controllers
         private readonly IOrganizationServices _service;
         public OrganizationController(IOrganizationServices services, IMapper mapper)
         {
-            _mapper = mapper;
+            _mapper = mapper;   
             _service = services;
         }
         [HttpGet("")]
@@ -25,7 +28,7 @@ namespace InvoicierWebApiV1.Controllers
         {
             var organizations = await _service.GetOrganizations();
             var organizationsDto = _mapper.Map<OrganizationReadDto>(organizations);
-            return Ok(organizationsDto);
+            return Ok(organizations);
         }
         [Route("{id}", Name = "OrganizationById")]
         [HttpGet]
