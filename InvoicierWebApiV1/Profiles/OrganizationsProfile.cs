@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using InvoicierWebApiV1.Data.EntityModels;
 using InvoicierWebApiV1.Dtos;
+using InvoicierWebApiV1.Dtos.InvoiceDtos;
 
 namespace InvoicierWebApiV1.Profiles
 {
@@ -13,7 +14,8 @@ namespace InvoicierWebApiV1.Profiles
             CreateMap<OrganizationWriteDto, Organization>();
             CreateMap<OrganizationUpdateDto, Organization>();
             CreateMap<Organization, OrganizationUpdateDto>();
-
+            CreateMap<Invoice, InvoiceReadDto>();
+            
         }
     }
 }

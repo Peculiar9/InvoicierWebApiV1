@@ -70,7 +70,8 @@ namespace InvoicierWebApiV1
                 });
             
              services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-             services.AddScoped<IOrganizationServices, MockOrganizationService>();
+             services.AddScoped<IOrganizationServices, OrganizationService>();
+             services.AddScoped<InvoiceService, InvoiceServiceRepo>();
              
             //  services.AddScoped<IRepositoryServices, ImageServiceRepo>();
             // var jwtTokenConfig = Configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
