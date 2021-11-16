@@ -16,7 +16,9 @@ namespace InvoicierWebApiV1.Services
         }
         public async Task<IEnumerable<Invoice>> GetInvoices()
         {
-            return _context.Invoices.ToList();
+            var invoices = _context.Invoices.ToList();
+           
+            return invoices;
         }
         public async Task CreateInvoice(Invoice model)
         { 
@@ -32,11 +34,8 @@ namespace InvoicierWebApiV1.Services
                 }
             }
         }
-        public async Task<Invoice> GetInvoiceById(int id)
-        {
-            return _context.Invoices.FirstOrDefault(p => p.Id == id);
-        }
- 
+        public async Task<Invoice> GetInvoiceById(int id) => _context.Invoices.FirstOrDefault(p => p.Id == id);
+
 
         public async Task RemoveInvoice(Invoice invoice)
         {

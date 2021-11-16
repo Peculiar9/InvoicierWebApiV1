@@ -20,14 +20,14 @@ namespace InvoicierWebApiV1.Services
         {
             return new List<Organization>() {
                 new Organization {
-                    Id = 1,
+                    OrganizationId = 1,
                     Name = "Oladoke Spare Parts Limited",
                     Location = "Lagos Nigeria",
                     Address ="Somewhere in Lagos",
                     Email = "oladoke@gmail.com"   
                 },
                  new Organization {
-                    Id = 2,
+                    OrganizationId = 2,
                     Name = "Femi Otedola Limited",
                     Location = "Lagos Nigeria",
                     Address ="Somewhere in Lagos",
@@ -39,7 +39,7 @@ namespace InvoicierWebApiV1.Services
 
         public async Task<Organization> GetOrganizationById(int id)
         {
-            return _dbcontext.Organizations.FirstOrDefault(p => p.Id == id);
+            return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
         }
 
         public async Task CreateOrganization(Organization Organization)

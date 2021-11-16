@@ -4,7 +4,8 @@ namespace InvoicierWebApiV1.Data.EntityModels
 {
     public class Organization
     {
-        public int Id { get; set; }
+        [Key]
+        public int OrganizationId { get; set; }
         [Required]
         public string Name { get; set; }
         public string Location { get; set; }

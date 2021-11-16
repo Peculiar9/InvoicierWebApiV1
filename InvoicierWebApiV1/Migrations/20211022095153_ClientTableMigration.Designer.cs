@@ -4,14 +4,16 @@ using InvoicierWebApiV1;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InvoicierWebApiV1.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    partial class InvoicierDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211022095153_ClientTableMigration")]
+    partial class ClientTableMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

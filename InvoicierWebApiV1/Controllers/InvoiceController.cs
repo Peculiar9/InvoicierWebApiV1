@@ -3,16 +3,15 @@ using AutoMapper;
 using InvoicierWebApiV1.Data.EntityModels;
 using InvoicierWebApiV1.Dtos.InvoiceDtos;
 using InvoicierWebApiV1.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace InvoicierWebApiV1.Controllers
 
 {
-    [Authorize(Roles = UserRoles.Admin)]
-    [Authorize]
-    [ApiController]
+    // [Authorize(Roles = UserRoles.Admin)]
+    // [Authorize]
+    // [ApiController]
     [Route("api/invoice")]
     public class InvoiceController : ControllerBase
     {
@@ -29,8 +28,8 @@ namespace InvoicierWebApiV1.Controllers
 
         // GET api/invoice/
         [HttpGet("")]
-        public IActionResult Index(){
-            var model = Service.GetInvoices();
+        public async Task<IActionResult> Index(){
+            var model = await Service.GetInvoices();
             return Ok(model);
         }
         ///<Summary>
@@ -48,15 +47,39 @@ namespace InvoicierWebApiV1.Controllers
             return NotFound();
         }
 
+             
         [HttpPost]
-        [Route("create/{id}")]
-        public async Task<IActionResult> CreateInvoice(InvoiceCreateDto invoiceCreate)
+        [Route("create")]
+        public async Task<IActionResult> CreateInvoice([FromBody]InvoiceCreateDto invoiceModelDto)
         { 
-             var invoiceModel = _mapper.Map<Invoice>(invoiceCreate);
+            var invoiceModel = new Invoice {
+                InvoiceNumber = invoiceModelDto.InvoiceNumber,
+                Id = invoiceModelDto.Id,
+                CreatedOn = invoiceModelDto.CreatedOn,
+                ExpiredOn = invoiceModelDto.ExpiredOn,
+                Comment = invoiceModelDto.Comment,
+                Discount = invoiceModelDto.Discount,
+                IsPaid = invoiceModelDto.IsPaid,
+                Total = invoiceModelDto.Total,
+                client = new Client{
+                    Id = invoiceModelDto.client.Id,
+                    FirstName = invoiceModelDto.client.FirstName,
+                    LastName = invoiceModelDto.client.LastName,
+                    Email = invoiceModelDto.client.Email,
+                    BankAccount = invoiceModelDto.client.BankAccount,
+                    OrganizationId = invoiceModelDto.client.OrganizationId
+                }
+            };
              await Service.CreateInvoice(invoiceModel);
              Service.SaveChanges();
-             var hostelReadDto = _mapper.Map<InvoiceReadDto>(invoiceModel);
-           return CreatedAtRoute(nameof(GetInvoiceById), new {Id = hostelReadDto.Id}, hostelReadDto); 
+             var invoiceReadDto = _mapper.Map<InvoiceReadDto>(invoiceModel);
+           return CreatedAtRoute(nameof(GetInvoiceById), new {Id = invoiceReadDto.Id}, invoiceReadDto); 
+        // return Ok(
+        //     new Response{
+        //         Status = "Successful",
+        //         Message = "Invoice Created Successfully"
+        //     }
+        // );
         }
 
 

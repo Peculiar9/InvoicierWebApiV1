@@ -1,9 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-namespace InvoicierWebApiV1.Data.EntityModels
+using System.ComponentModel.DataAnnotations;
+
+namespace InvoicierWebApiV1.Dtos
 {
-    public class Client
+    public class ClientCreateDto
     {
-        [Key]
+         [Key]  
         public int Id { get; set; }
         [Required(ErrorMessage = "FirstName is required")]
         public string FirstName { get; set;}
@@ -19,6 +20,3 @@ namespace InvoicierWebApiV1.Data.EntityModels
         public bool Status { get; set; }        
     }
 }
-
-
-

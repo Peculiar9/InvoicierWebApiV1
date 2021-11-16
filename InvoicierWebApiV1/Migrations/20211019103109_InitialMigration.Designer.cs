@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20211015162730_InvoiceTable")]
-    partial class InvoiceTable
+    [Migration("20211019103109_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.10")
+                .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.AuthModels.ApplicationUser", b =>
@@ -95,6 +95,35 @@ namespace InvoicierWebApiV1.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Client", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Address")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Clients");
+                });
+
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -116,7 +145,7 @@ namespace InvoicierWebApiV1.Migrations
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Organization", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("OrganizationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -135,7 +164,7 @@ namespace InvoicierWebApiV1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("OrganizationId");
 
                     b.ToTable("Organizations");
                 });

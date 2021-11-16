@@ -18,5 +18,6 @@ namespace InvoicierWebApiV1
         }
         public DbSet<Organization> Organizations { get; set; }
         public DbSet<Invoice> Invoices {get; set;}
+        public DbSet<Client> Clients {get; set;}
     }   
 }
