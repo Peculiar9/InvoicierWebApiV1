@@ -1,4 +1,6 @@
+using InvoicierWebApiV1.Data.EntityModels;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InvoicierWebApiV1.Dtos
 {
@@ -11,7 +13,9 @@ namespace InvoicierWebApiV1.Dtos
         [Required(ErrorMessage = "LastName is required")]
         public string LastName { get; set; }
         [Required(ErrorMessage = "Organization is required")]
+        [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
+        public Organization Organization { get; set; }
         [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
         [Required(ErrorMessage = "Email is required")]

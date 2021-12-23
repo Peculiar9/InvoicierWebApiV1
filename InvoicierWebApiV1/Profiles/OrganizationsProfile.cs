@@ -10,6 +10,8 @@ namespace InvoicierWebApiV1.Profiles
         public OrganizationsProfile()
         {
             //Source => Destination
+            CreateMap<OrganizationAddress, OrganizationAddressReadDto>();
+            CreateMap<OrganizationWriteDtoAddress, OrganizationAddress>();
             CreateMap<Organization, OrganizationReadDto>();
             CreateMap<OrganizationWriteDto, Organization>();
             CreateMap<OrganizationUpdateDto, Organization>();

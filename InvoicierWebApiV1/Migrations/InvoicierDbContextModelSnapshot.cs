@@ -100,8 +100,9 @@ namespace InvoicierWebApiV1.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("Address")
-                        .HasColumnType("int");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BankAccount")
                         .HasColumnType("nvarchar(max)");
@@ -125,6 +126,8 @@ namespace InvoicierWebApiV1.Migrations
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("Clients");
                 });
@@ -157,6 +160,9 @@ namespace InvoicierWebApiV1.Migrations
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
+                    b.Property<int>("OrganizationId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Price")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -168,6 +174,8 @@ namespace InvoicierWebApiV1.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrganizationId");
 
                     b.HasIndex("clientId");
 
@@ -181,11 +189,11 @@ namespace InvoicierWebApiV1.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageLogo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Location")
@@ -198,6 +206,43 @@ namespace InvoicierWebApiV1.Migrations
                     b.HasKey("OrganizationId");
 
                     b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", b =>
+                {
+                    b.Property<int>("AddressId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address1")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Address2")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Country")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("OrganizationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("State")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Zipcode")
+                        .HasColumnType("int");
+
+                    b.HasKey("AddressId");
+
+                    b.HasIndex("OrganizationId")
+                        .IsUnique()
+                        .HasFilter("[OrganizationId] IS NOT NULL");
+
+                    b.ToTable("OrganizationAddress");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -331,13 +376,41 @@ namespace InvoicierWebApiV1.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Client", b =>
+                {
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Organization");
+                });
+
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Invoice", b =>
                 {
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
+                        .WithMany()
+                        .HasForeignKey("OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("InvoicierWebApiV1.Data.EntityModels.Client", "client")
                         .WithMany()
                         .HasForeignKey("clientId");
 
                     b.Navigation("client");
+
+                    b.Navigation("Organization");
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", b =>
+                {
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
+                        .WithOne("Address")
+                        .HasForeignKey("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", "OrganizationId");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -388,6 +461,12 @@ namespace InvoicierWebApiV1.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Organization", b =>
+                {
+                    b.Navigation("Address")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

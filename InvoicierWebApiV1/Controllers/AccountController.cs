@@ -11,6 +11,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
 using System.Collections.Generic;
+using InvoicierWebApiV1.Dtos;
+using System.Linq;
 
 namespace InvoicierWebApiV1.Controllers
 {
@@ -18,9 +20,6 @@ namespace InvoicierWebApiV1.Controllers
     [Route("api/auth")]
     public class AccountController : ControllerBase
     {
-        //private readonly ILogger<AccountController> _logger;
-        //private readonly IUserService _userService;
-        //private readonly IJwtAuthManager _jwtAuthManager;
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
@@ -80,7 +79,7 @@ namespace InvoicierWebApiV1.Controllers
                 {
                     return Ok(new Response
                     {
-                        Message = "User Created Successfully",
+                        Message = $"User {model.UserName} Created Successfully",
                         Status = "Success"
                     });
                 }
@@ -98,6 +97,7 @@ namespace InvoicierWebApiV1.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var user = await userManager.FindByNameAsync(model.UserName);
+            //var email = await userManager.FindByEmailAsync(model.Email);
             var passwordCheck = await userManager.CheckPasswordAsync(user, model.Password);
             if (user != null && passwordCheck)
             {
@@ -119,26 +119,37 @@ namespace InvoicierWebApiV1.Controllers
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );
-                
+
+                 
                 return Ok(new
                 {
                     token = new JwtSecurityTokenHandler().WriteToken(token),
                     expiration = token.ValidTo
                 }); 
             }
-            return Unauthorized();
+
+            var responseMessage = "";
+                if (!passwordCheck)
+                {
+                    responseMessage = "Email or Password not correct";
+                }
+
+            return Unauthorized(new Response { Status = "Failed", Message = $"{responseMessage}" });
         }
+
+        //POST /registeradmin
         [AllowAnonymous]
         [HttpPost("registeradmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
             var userExist = await userManager.FindByNameAsync(model.UserName);
-            if (userExist != null)
+            var emailExist = await userManager.FindByEmailAsync(model.Email);
+            if (emailExist != null)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError,
                     new Response
                     {
-                        Message = "User Already Exists",
+                        Message = $"{model.Email} is already registered",
                         Status = "Error"
                     });
             }
@@ -170,12 +181,63 @@ namespace InvoicierWebApiV1.Controllers
             {
                 return Ok(new Response
                 {
-                    Message = "User Created Successfully",
+                    Message = "Admin User Created Successfully",
                     Status = "Success"
                 });
             }
         }
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto userModel)
+        {
+            var user = await userManager.FindByEmailAsync(userModel.User.Email);
+
+            if (user != null)
+            {
+                try
+                {
+                    var passwordChange = await userManager.ChangePasswordAsync(user, userModel.PreviousPassword, userModel.NewPassword);
+                    if (passwordChange.Succeeded)
+                    {
+                        return Ok( new Response
+                        {
+                            Status = "Success",
+                            Message = $"{userModel.User.Email} Password Updated Successfully!!!"
+                        });
+                    }
+                    else
+                    {
+                        var errors = passwordChange.Errors.ToList();
+                         
+
+                        return NotFound(new Response
+                        {
+                            Status = "Failed",
+                            Message = $"{errors[0].Code}"
+                        });
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
+            }
+            else
+            {
+                return StatusCode(301, new Response
+                {
+                    Status = "Duplicate User",
+                    Message = $"User {userModel.User.Email} does not exist"
+                });
+            }
+            //return StatusCode(300, new Response { 
+            //    Message= $"{new ArgumentNullException()}"
+            //});
+        }
     }
-
-
 }
+
+
+

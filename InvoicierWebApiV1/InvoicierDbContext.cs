@@ -17,7 +17,7 @@ namespace InvoicierWebApiV1
             base.OnModelCreating(builder);
         }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Invoice> Invoices {get; set;}
-        public DbSet<Client> Clients {get; set;}
-    }   
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<Client> Clients { get; set; }
+    }
 }

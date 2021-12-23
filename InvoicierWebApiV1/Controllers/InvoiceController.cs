@@ -3,15 +3,16 @@ using AutoMapper;
 using InvoicierWebApiV1.Data.EntityModels;
 using InvoicierWebApiV1.Dtos.InvoiceDtos;
 using InvoicierWebApiV1.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 
 namespace InvoicierWebApiV1.Controllers
 
 {
-    // [Authorize(Roles = UserRoles.Admin)]
-    // [Authorize]
-    // [ApiController]
+    [Authorize(Roles = UserRoles.Admin)]
+    [Authorize]
+    [ApiController]
     [Route("api/invoice")]
     public class InvoiceController : ControllerBase
     {
@@ -30,6 +31,7 @@ namespace InvoicierWebApiV1.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(){
             var model = await Service.GetInvoices();
+
             return Ok(model);
         }
         ///<Summary>
@@ -74,12 +76,7 @@ namespace InvoicierWebApiV1.Controllers
              Service.SaveChanges();
              var invoiceReadDto = _mapper.Map<InvoiceReadDto>(invoiceModel);
            return CreatedAtRoute(nameof(GetInvoiceById), new {Id = invoiceReadDto.Id}, invoiceReadDto); 
-        // return Ok(
-        //     new Response{
-        //         Status = "Successful",
-        //         Message = "Invoice Created Successfully"
-        //     }
-        // );
+        
         }
 
 
