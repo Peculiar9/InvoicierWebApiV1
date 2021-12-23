@@ -1,192 +1,243 @@
 ﻿using InvoicierWebApiV1.Data.AuthModels;
-using InvoicierWebApiV1.Infrastructure;
-using InvoicierWebApiV1.Service.UserServiceInterfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
-using static InvoicierWebApiV1.Services.UserService;
+using Microsoft.AspNetCore.Http;
+using System;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Security.Claims;
+using System.Collections.Generic;
+using InvoicierWebApiV1.Dtos;
+using System.Linq;
 
 namespace InvoicierWebApiV1.Controllers
 {
     [ApiController]
-    [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AccountController : ControllerBase
     {
-        private readonly ILogger<AccountController> _logger;
-        private readonly IUserService _userService;
-        private readonly IJwtAuthManager _jwtAuthManager;
-
-        public AccountController(ILogger<AccountController> logger, IUserService userService, IJwtAuthManager jwtAuthManager)
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
+        private readonly IConfiguration _configuration;
+        public AccountController(
+         UserManager<ApplicationUser> userManager, 
+         RoleManager<IdentityRole> roleManager, 
+         IConfiguration configuration)
         {
-            _logger = logger;
-            _userService = userService;
-            _jwtAuthManager = jwtAuthManager;
+            this.userManager = userManager;
+            this.roleManager = roleManager;
+            _configuration = configuration;
         }
+
+
 
         [AllowAnonymous]
-        [HttpPost("login")]
-        public ActionResult Login([FromBody] LoginRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            if (!_userService.IsValidUserCredentials(request.UserName, request.Password))
-            {
-                return Unauthorized();
-            }
-
-            var role = _userService.GetUserRole(request.UserName);
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name,request.UserName),
-                new Claim(ClaimTypes.Role, role)
-            };
-
-            var jwtResult = _jwtAuthManager.GenerateTokens(request.UserName, claims, DateTime.Now);
-            _logger.LogInformation($"User [{request.UserName}] logged in the system.");
-            return Ok(new LoginResult
-            {
-                UserName = request.UserName,
-                Role = role,
-                AccessToken = jwtResult.AccessToken,
-                RefreshToken = jwtResult.RefreshToken.TokenString
-            });
-        }
-
-        [HttpGet("user")]
-        [Authorize]
-        public ActionResult GetCurrentUser()
-        {
-            return Ok(new LoginResult
-            {
-                UserName = User.Identity?.Name,
-                Role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty,
-                OriginalUserName = User.FindFirst("OriginalUserName")?.Value
-            });
-        }
-
-        [HttpPost("logout")]
-        [Authorize]
-        public ActionResult Logout()
-        {
-            // optionally "revoke" JWT token on the server side --> add the current token to a block-list
-            // https://github.com/auth0/node-jsonwebtoken/issues/375
-
-            var userName = User.Identity?.Name;
-            _jwtAuthManager.RemoveRefreshTokenByUserName(userName);
-            _logger.LogInformation($"User [{userName}] logged out the system.");
-            return Ok();
-        }
-
-        [HttpPost("refresh-token")]
-        [Authorize]
-        public async Task<ActionResult> RefreshToken([FromBody] RefreshTokenRequest request)
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             try
             {
-                var userName = User.Identity?.Name;
-                _logger.LogInformation($"User [{userName}] is trying to refresh JWT token.");
-
-                if (string.IsNullOrWhiteSpace(request.RefreshToken))
+                var userExist = await userManager.FindByNameAsync(model.UserName);
+                if (userExist != null)
+                { 
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new Response
+                        {
+                            Message = "User Already Exists",
+                            Status = "Error"
+                        });
+                }
+                var role = new IdentityRole();
+                role.Name = UserRoles.User;
+                ApplicationUser user = new ApplicationUser()
                 {
-                    return Unauthorized();
+                    Email = model.Email,
+                    SecurityStamp = Guid.NewGuid().ToString(),
+                    UserName = model.UserName,
+                    EmailConfirmed = true,
+                    UserRoleId = role.Id                    
+                };
+
+                var result = await userManager.CreateAsync(user, model.Password);
+
+
+                if (!result.Succeeded)
+                {
+                    var response =  new Response
+                        {
+                            Message = "User Registration Failed",
+                            Status = "Error"
+                        };
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+                       
+                }
+                
+                {
+                    return Ok(new Response
+                    {
+                        Message = $"User {model.UserName} Created Successfully",
+                        Status = "Success"
+                    });
+                }
+            }
+            catch (System.Exception)
+            {
+                
+                throw;
+            }
+            // return Ok(); 
+        }
+        [AllowAnonymous]
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        {
+            var user = await userManager.FindByNameAsync(model.UserName);
+            //var email = await userManager.FindByEmailAsync(model.Email);
+            var passwordCheck = await userManager.CheckPasswordAsync(user, model.Password);
+            if (user != null && passwordCheck)
+            {
+                var roles = await userManager.GetRolesAsync(user);
+                var authClaims = new List<Claim>
+                { 
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                }; 
+                foreach (var userRole in roles)
+                { 
+                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                }
+                var authSigninKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["JWT:ValidIssuer"],
+                    audience: _configuration["JWT:ValidAudience"],
+                    expires: DateTime.Now.AddHours(5),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
+                    );
+
+                 
+                return Ok(new
+                {
+                    token = new JwtSecurityTokenHandler().WriteToken(token),
+                    expiration = token.ValidTo
+                }); 
+            }
+
+            var responseMessage = "";
+                if (!passwordCheck)
+                {
+                    responseMessage = "Email or Password not correct";
                 }
 
-                var accessToken = await HttpContext.GetTokenAsync("Bearer", "access_token");
-                var jwtResult = _jwtAuthManager.Refresh(request.RefreshToken, accessToken, DateTime.Now);
-                _logger.LogInformation($"User [{userName}] has refreshed JWT token.");
-                return Ok(new LoginResult
+            return Unauthorized(new Response { Status = "Failed", Message = $"{responseMessage}" });
+        }
+
+        //POST /registeradmin
+        [AllowAnonymous]
+        [HttpPost("registeradmin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        {
+            var userExist = await userManager.FindByNameAsync(model.UserName);
+            var emailExist = await userManager.FindByEmailAsync(model.Email);
+            if (emailExist != null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response
+                    {
+                        Message = $"{model.Email} is already registered",
+                        Status = "Error"
+                    });
+            }
+            ApplicationUser user = new ApplicationUser()
+            {
+                Email = model.Email,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = model.UserName
+            };
+            var result = await userManager.CreateAsync(user, model.Password);
+            if (!result.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new Response
+                    {
+                        Message = "User Registration Failed",
+                        Status = "Error"
+                    });
+            }
+            if (!await roleManager.RoleExistsAsync(UserRoles.Admin))  
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));  
+            if (!await roleManager.RoleExistsAsync(UserRoles.User))  
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));  
+  
+            if (await roleManager.RoleExistsAsync(UserRoles.Admin))  
+            {  
+                await userManager.AddToRoleAsync(user, UserRoles.Admin);  
+            }  
+            {
+                return Ok(new Response
                 {
-                    UserName = userName,
-                    Role = User.FindFirst(ClaimTypes.Role)?.Value ?? string.Empty,
-                    AccessToken = jwtResult.AccessToken,
-                    RefreshToken = jwtResult.RefreshToken.TokenString
+                    Message = "Admin User Created Successfully",
+                    Status = "Success"
                 });
             }
-            catch (SecurityTokenException e)
-            {
-                return Unauthorized(e.Message); // return 401 so that the client side can redirect the user to login page
-            }
         }
-
-        [HttpPost("impersonation")]
-        [Authorize(Roles = UserRoles.Admin)]
-        public ActionResult Impersonate([FromBody] ImpersonationRequest request)
+        [HttpPost]
+        [Route("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto userModel)
         {
-            var userName = User.Identity?.Name;
-            _logger.LogInformation($"User [{userName}] is trying to impersonate [{request.UserName}].");
+            var user = await userManager.FindByEmailAsync(userModel.User.Email);
 
-            var impersonatedRole = _userService.GetUserRole(request.UserName);
-            if (string.IsNullOrWhiteSpace(impersonatedRole))
+            if (user != null)
             {
-                _logger.LogInformation($"User [{userName}] failed to impersonate [{request.UserName}] due to the target user not found.");
-                return BadRequest($"The target user [{request.UserName}] is not found.");
+                try
+                {
+                    var passwordChange = await userManager.ChangePasswordAsync(user, userModel.PreviousPassword, userModel.NewPassword);
+                    if (passwordChange.Succeeded)
+                    {
+                        return Ok( new Response
+                        {
+                            Status = "Success",
+                            Message = $"{userModel.User.Email} Password Updated Successfully!!!"
+                        });
+                    }
+                    else
+                    {
+                        var errors = passwordChange.Errors.ToList();
+                         
+
+                        return NotFound(new Response
+                        {
+                            Status = "Failed",
+                            Message = $"{errors[0].Code}"
+                        });
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+
             }
-            if (impersonatedRole == UserRoles.Admin)
+            else
             {
-                _logger.LogInformation($"User [{userName}] is not allowed to impersonate another Admin.");
-                return BadRequest("This action is not supported.");
+                return StatusCode(301, new Response
+                {
+                    Status = "Duplicate User",
+                    Message = $"User {userModel.User.Email} does not exist"
+                });
             }
-
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name,request.UserName),
-                new Claim(ClaimTypes.Role, impersonatedRole),
-                new Claim("OriginalUserName", userName ?? string.Empty)
-            };
-
-            var jwtResult = _jwtAuthManager.GenerateTokens(request.UserName, claims, DateTime.Now);
-            _logger.LogInformation($"User [{request.UserName}] is impersonating [{request.UserName}] in the system.");
-            return Ok(new LoginResult
-            {
-                UserName = request.UserName,
-                Role = impersonatedRole,
-                OriginalUserName = userName,
-                AccessToken = jwtResult.AccessToken,
-                RefreshToken = jwtResult.RefreshToken.TokenString
-            });
-        }
-
-        [HttpPost("stop-impersonation")]
-        public ActionResult StopImpersonation()
-        {
-            var userName = User.Identity?.Name;
-            var originalUserName = User.FindFirst("OriginalUserName")?.Value;
-            if (string.IsNullOrWhiteSpace(originalUserName))
-            {
-                return BadRequest("You are not impersonating anyone.");
-            }
-            _logger.LogInformation($"User [{originalUserName}] is trying to stop impersonate [{userName}].");
-
-            var role = _userService.GetUserRole(originalUserName);
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.Name,originalUserName),
-                new Claim(ClaimTypes.Role, role)
-            };
-
-            var jwtResult = _jwtAuthManager.GenerateTokens(originalUserName, claims, DateTime.Now);
-            _logger.LogInformation($"User [{originalUserName}] has stopped impersonation.");
-            return Ok(new LoginResult
-            {
-                UserName = originalUserName,
-                Role = role,
-                OriginalUserName = null,
-                AccessToken = jwtResult.AccessToken,
-                RefreshToken = jwtResult.RefreshToken.TokenString
-            });
+            //return StatusCode(300, new Response { 
+            //    Message= $"{new ArgumentNullException()}"
+            //});
         }
     }
-
-
 }
+
+
+

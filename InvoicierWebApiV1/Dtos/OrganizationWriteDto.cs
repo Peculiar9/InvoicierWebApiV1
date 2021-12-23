@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using InvoicierWebApiV1.Data.EntityModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,8 +13,23 @@ namespace InvoicierWebApiV1.Dtos
         [Required]
         public string Name { get; set; }
         public string Location { get; set; }
-        public string Address { get; set; }
+
         [Required]
         public string Email { get; set; }
+        public int PostalCode { get; set; }
+        public string ImageLogo { get; set; }
+        
+        public virtual OrganizationWriteDtoAddress Address { get; set; }
+
+    }
+
+    public class OrganizationWriteDtoAddress
+    {
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public int Zipcode { get; set; }
+        public string State { get; set; }
+        public string Country { get; set; }
     }
 }
