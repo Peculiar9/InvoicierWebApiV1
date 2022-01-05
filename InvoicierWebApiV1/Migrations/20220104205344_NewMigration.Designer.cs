@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20211223054826_Address")]
-    partial class Address
+    [Migration("20220104205344_NewMigration")]
+    partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -121,7 +121,7 @@ namespace InvoicierWebApiV1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrganizationId")
+                    b.Property<int?>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
@@ -172,14 +172,9 @@ namespace InvoicierWebApiV1.Migrations
                     b.Property<string>("Total")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("clientId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
-
-                    b.HasIndex("clientId");
 
                     b.ToTable("Invoices");
                 });
@@ -229,7 +224,7 @@ namespace InvoicierWebApiV1.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrganizationId")
+                    b.Property<int>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<string>("State")
@@ -241,8 +236,7 @@ namespace InvoicierWebApiV1.Migrations
                     b.HasKey("AddressId");
 
                     b.HasIndex("OrganizationId")
-                        .IsUnique()
-                        .HasFilter("[OrganizationId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("OrganizationAddress");
                 });
@@ -380,13 +374,9 @@ namespace InvoicierWebApiV1.Migrations
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Client", b =>
                 {
-                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", null)
+                        .WithMany("Clients")
+                        .HasForeignKey("OrganizationId");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Invoice", b =>
@@ -397,12 +387,6 @@ namespace InvoicierWebApiV1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Client", "client")
-                        .WithMany()
-                        .HasForeignKey("clientId");
-
-                    b.Navigation("client");
-
                     b.Navigation("Organization");
                 });
 
@@ -410,7 +394,9 @@ namespace InvoicierWebApiV1.Migrations
                 {
                     b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
                         .WithOne("Address")
-                        .HasForeignKey("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", "OrganizationId");
+                        .HasForeignKey("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", "OrganizationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Organization");
                 });
@@ -468,8 +454,9 @@ namespace InvoicierWebApiV1.Migrations
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Organization", b =>
                 {
-                    b.Navigation("Address")
-                        .IsRequired();
+                    b.Navigation("Address");
+
+                    b.Navigation("Clients");
                 });
 #pragma warning restore 612, 618
         }

@@ -10,19 +10,19 @@ namespace InvoicierWebApiV1.Dtos
 {
     public class OrganizationWriteDto
     {
+
         [Required]
         public string Name { get; set; }
         public string Location { get; set; }
-
+        //public string Address { get; set; }
         [Required]
         public string Email { get; set; }
-        public int PostalCode { get; set; }
         public string ImageLogo { get; set; }
-        
+        //[Required]
+
+
         public virtual OrganizationWriteDtoAddress Address { get; set; }
-
     }
-
     public class OrganizationWriteDtoAddress
     {
         public string Address1 { get; set; }
@@ -31,5 +31,7 @@ namespace InvoicierWebApiV1.Dtos
         public int Zipcode { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
+
+        public virtual OrganizationWriteDto Organization { get; set; }
     }
 }

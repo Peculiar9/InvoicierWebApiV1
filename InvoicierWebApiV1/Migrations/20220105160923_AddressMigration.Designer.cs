@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20211223053209_OrganizationAddress")]
-    partial class OrganizationAddress
+    [Migration("20220105160923_AddressMigration")]
+    partial class AddressMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -121,7 +121,7 @@ namespace InvoicierWebApiV1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("OrganizationId")
+                    b.Property<int?>("OrganizationId")
                         .HasColumnType("int");
 
                     b.Property<bool>("Status")
@@ -172,14 +172,9 @@ namespace InvoicierWebApiV1.Migrations
                     b.Property<string>("Total")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("clientId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizationId");
-
-                    b.HasIndex("clientId");
 
                     b.ToTable("Invoices");
                 });
@@ -190,6 +185,9 @@ namespace InvoicierWebApiV1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -205,10 +203,10 @@ namespace InvoicierWebApiV1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("PostalCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("OrganizationId");
+
+                    b.HasIndex("AddressId")
+                        .IsUnique();
 
                     b.ToTable("Organizations");
                 });
@@ -232,9 +230,6 @@ namespace InvoicierWebApiV1.Migrations
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OrganizationId")
-                        .HasColumnType("int");
-
                     b.Property<string>("State")
                         .HasColumnType("nvarchar(max)");
 
@@ -242,10 +237,6 @@ namespace InvoicierWebApiV1.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("AddressId");
-
-                    b.HasIndex("OrganizationId")
-                        .IsUnique()
-                        .HasFilter("[OrganizationId] IS NOT NULL");
 
                     b.ToTable("OrganizationAddress");
                 });
@@ -383,13 +374,9 @@ namespace InvoicierWebApiV1.Migrations
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Client", b =>
                 {
-                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
-                        .WithMany()
-                        .HasForeignKey("OrganizationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Organization");
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", null)
+                        .WithMany("Clients")
+                        .HasForeignKey("OrganizationId");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Invoice", b =>
@@ -400,22 +387,18 @@ namespace InvoicierWebApiV1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Client", "client")
-                        .WithMany()
-                        .HasForeignKey("clientId");
-
-                    b.Navigation("client");
-
                     b.Navigation("Organization");
                 });
 
-            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", b =>
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Organization", b =>
                 {
-                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.Organization", "Organization")
-                        .WithOne("Address")
-                        .HasForeignKey("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", "OrganizationId");
+                    b.HasOne("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", "Address")
+                        .WithOne("Organization")
+                        .HasForeignKey("InvoicierWebApiV1.Data.EntityModels.Organization", "AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Organization");
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -471,8 +454,12 @@ namespace InvoicierWebApiV1.Migrations
 
             modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.Organization", b =>
                 {
-                    b.Navigation("Address")
-                        .IsRequired();
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Data.EntityModels.OrganizationAddress", b =>
+                {
+                    b.Navigation("Organization");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,7 @@ namespace InvoicierWebApiV1.Dtos
         public string Name { get; set; }
         public string Location { get; set; }
         public string Email { get; set; }
-        public virtual OrganizationAddressUpdateDto OrganizationAddress { get; set; }
+        //public virtual OrganizationAddressUpdateDto OrganizationAddress { get; set; }
     }
     public class OrganizationAddressUpdateDto
     {

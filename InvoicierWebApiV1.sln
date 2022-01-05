@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoicierWebApiV1", "Invoic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoicierWebApiV1.Data", "InvoicierWebApiV1.Data\InvoicierWebApiV1.Data.csproj", "{9AD6AE44-44E7-48DB-A361-59525E4CC93F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoicierWebApiV1.Service", "InvoicierWebApiV1.Service\InvoicierWebApiV1.Service.csproj", "{2A691131-E416-4A99-83B4-4F9E6326C1C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InvoicierWebApiV1.Service", "InvoicierWebApiV1.Service\InvoicierWebApiV1.Service.csproj", "{2A691131-E416-4A99-83B4-4F9E6326C1C7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InvoicierWebAPI.Tests", "InvoicierWebAPI.Tests\InvoicierWebAPI.Tests.csproj", "{9BCC568F-1836-45DF-BB2B-DB35D621C3E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{2A691131-E416-4A99-83B4-4F9E6326C1C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A691131-E416-4A99-83B4-4F9E6326C1C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A691131-E416-4A99-83B4-4F9E6326C1C7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BCC568F-1836-45DF-BB2B-DB35D621C3E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BCC568F-1836-45DF-BB2B-DB35D621C3E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BCC568F-1836-45DF-BB2B-DB35D621C3E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BCC568F-1836-45DF-BB2B-DB35D621C3E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

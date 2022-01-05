@@ -53,25 +53,8 @@ namespace InvoicierWebApiV1.Controllers
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateInvoice([FromBody]InvoiceCreateDto invoiceModelDto)
-        { 
-            var invoiceModel = new Invoice {
-                InvoiceNumber = invoiceModelDto.InvoiceNumber,
-                Id = invoiceModelDto.Id,
-                CreatedOn = invoiceModelDto.CreatedOn,
-                ExpiredOn = invoiceModelDto.ExpiredOn,
-                Comment = invoiceModelDto.Comment,
-                Discount = invoiceModelDto.Discount,
-                IsPaid = invoiceModelDto.IsPaid,
-                Total = invoiceModelDto.Total,
-                client = new Client{
-                    Id = invoiceModelDto.client.Id,
-                    FirstName = invoiceModelDto.client.FirstName,
-                    LastName = invoiceModelDto.client.LastName,
-                    Email = invoiceModelDto.client.Email,
-                    BankAccount = invoiceModelDto.client.BankAccount,
-                    OrganizationId = invoiceModelDto.client.OrganizationId
-                }
-            };
+        {
+            var invoiceModel = _mapper.Map<Invoice>(invoiceModelDto);
              await Service.CreateInvoice(invoiceModel);
              Service.SaveChanges();
              var invoiceReadDto = _mapper.Map<InvoiceReadDto>(invoiceModel);

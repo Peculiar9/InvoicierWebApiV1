@@ -18,8 +18,6 @@ namespace InvoicierWebApiV1.Data.EntityModels
         public int Zipcode { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
-
-        [ForeignKey("OrganizationId")]
         public virtual Organization Organization { get; set; }
     }
 }

@@ -26,7 +26,7 @@ namespace InvoicierWebApiV1.Data.EntityModels
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
         public Organization Organization { get; set; }
-        public Client client { get; set; }
+        //public Client client { get; set; }
     }
 }
 
