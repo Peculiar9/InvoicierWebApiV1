@@ -15,4 +15,11 @@ namespace InvoicierWebApiV1.Data.AuthModels
 
         public string Password { get; set; }
     }
+
+    public class LoginModelForLogin
+    {
+         public string Email { get; set; }
+
+        public string Password { get; set; }
+    }
 }

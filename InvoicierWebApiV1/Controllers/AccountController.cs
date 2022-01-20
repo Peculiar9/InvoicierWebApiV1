@@ -86,18 +86,22 @@ namespace InvoicierWebApiV1.Controllers
             }
             catch (System.Exception)
             {
-                
                 throw;
             }
+                
             // return Ok(); 
         }
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
-        public async Task<IActionResult> Login([FromBody] LoginModel model)
+        public async Task<IActionResult> Login([FromBody] LoginModelForLogin model)
         {
-            var user = await userManager.FindByNameAsync(model.UserName);
-            //var email = await userManager.FindByEmailAsync(model.Email);
+            var login = new LoginModel{
+                Email = model.Email,
+                Password = model.Password
+            };
+            // var user = await userManager.FindByNameAsync(model.UserName);
+            var user = await userManager.FindByEmailAsync(model.Email);
             var passwordCheck = await userManager.CheckPasswordAsync(user, model.Password);
             if (user != null && passwordCheck)
             {
@@ -134,7 +138,7 @@ namespace InvoicierWebApiV1.Controllers
                     responseMessage = "Email or Password not correct";
                 }
 
-            return Unauthorized(new Response { Status = "Failed", Message = $"{responseMessage}" });
+            return StatusCode(400, new Response { Status = "Failed", Message = $"{responseMessage}" });
         }
 
         //POST /registeradmin

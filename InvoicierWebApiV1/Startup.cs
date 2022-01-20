@@ -107,11 +107,9 @@ namespace InvoicierWebApiV1
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvoicierWebApiV1 v1"));
 
-
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -123,3 +121,5 @@ namespace InvoicierWebApiV1
         }
     }
 }
+
+
