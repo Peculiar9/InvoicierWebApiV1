@@ -35,6 +35,7 @@
                 "${workspaceFolder}/InvoicierWebApiV1/InvoicierWebApiV1.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
+
             ],
             "problemMatcher": "$msCompile"
         }
