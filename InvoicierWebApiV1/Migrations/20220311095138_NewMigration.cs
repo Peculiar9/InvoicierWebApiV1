@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InvoicierWebApiV1.Migrations
 {
-    public partial class OrganizationAddress : Migration
+    public partial class NewMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,7 +58,6 @@ namespace InvoicierWebApiV1.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PostalCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageLogo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

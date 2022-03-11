@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20211223053209_OrganizationAddress")]
-    partial class OrganizationAddress
+    [Migration("20220311095138_NewMigration")]
+    partial class NewMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -203,9 +203,6 @@ namespace InvoicierWebApiV1.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostalCode")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrganizationId");

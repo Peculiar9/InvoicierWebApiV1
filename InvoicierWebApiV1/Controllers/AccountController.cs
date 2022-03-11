@@ -96,15 +96,18 @@ namespace InvoicierWebApiV1.Controllers
         [HttpPost]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await userManager.FindByNameAsync(model.UserName);
-            //var email = await userManager.FindByEmailAsync(model.Email);
+            var user = await userManager.FindByNameAsync(model.UserName) ?? await userManager.FindByEmailAsync(model.Email);
+            
             var passwordCheck = await userManager.CheckPasswordAsync(user, model.Password);
-            if (user != null && passwordCheck)
+            
+            if ((user != null) && passwordCheck)
             {
                 var roles = await userManager.GetRolesAsync(user);
+                
                 var authClaims = new List<Claim>
                 { 
                     new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(ClaimTypes.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }; 
                 foreach (var userRole in roles)
