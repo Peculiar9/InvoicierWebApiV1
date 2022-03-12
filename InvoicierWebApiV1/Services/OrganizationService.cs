@@ -22,7 +22,7 @@ namespace InvoicierWebApiV1.Services
 
         public async Task<Organization> GetOrganizationById(int id)
         {
-            return _dbcontext.Organizations.FirstOrDefault(p => p.Id == id);
+            return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
         }
 
         public async Task CreateOrganization(Organization Organization)
