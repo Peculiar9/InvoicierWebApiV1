@@ -1,5 +1,5 @@
-﻿using InvoicierWebApiV1.Core.EntityModels;
-using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
+﻿using InvoicierWebApiV1.Data.EntityModels;
+using InvoicierWebApiV1.Service.OrganizationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
