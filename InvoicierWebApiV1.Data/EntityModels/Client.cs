@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InvoicierWebApiV1.Data.EntityModels
+namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class Client
     {

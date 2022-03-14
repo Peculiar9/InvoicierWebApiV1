@@ -1,11 +1,11 @@
-﻿using InvoicierWebApiV1.Data.EntityModels;
-using InvoicierWebApiV1.Service.OrganizationServices;
+﻿using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace InvoicierWebApiV1.Services
+namespace InvoicierWebApiV1.Infrastructure.Service
 {
     public class OrganizationService : IOrganizationServices
     {
@@ -17,13 +17,14 @@ namespace InvoicierWebApiV1.Services
         }
         public async Task<IEnumerable<Organization>> GetOrganizations()
         {
-            return _dbcontext.Organizations.ToList();
+            return ((IEnumerable<Organization>)_dbcontext.Organizations).ToList();
         }
 
         public async Task<Organization> GetOrganizationById(int id)
         {
             return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
         }
+
         public async Task CreateOrganization(Organization Organization)
         {
             if (Organization != null)

@@ -1,12 +1,7 @@
-﻿using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using System;
-using System.Collections.Generic;
+﻿using InvoicierWebApiV1.Core.EntityModels;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace InvoicierWebApiV1.Dtos
+namespace InvoicierWebApiV1.Core.Dtos
 {
     public class OrganizationReadDto
     { [Key]

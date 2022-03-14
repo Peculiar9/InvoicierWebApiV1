@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InvoicierWebApiV1.Data\InvoicierWebApiV1.Data.csproj" />
-    <ProjectReference Include="..\InvoicierWebApiV1.Service\InvoicierWebApiV1.Service.csproj" />
+    <ProjectReference Include="..\InvoicierWebApiV1.Data\InvoicierWebApiV1.Core.csproj" />
+    <ProjectReference Include="..\InvoicierWebApiV1.Service\InvoicierWebApiV1.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

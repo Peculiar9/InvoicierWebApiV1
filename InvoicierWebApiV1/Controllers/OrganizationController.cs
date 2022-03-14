@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using InvoicierWebApiV1.Dtos;
-using InvoicierWebApiV1.Service.OrganizationServices;
+using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using InvoicierWebApiV1.Data.EntityModels;
+using InvoicierWebApiV1.Core.EntityModels;
 
-namespace InvoicierWebApiV1.Services
+namespace InvoicierWebApiV1.Core.Interfaces
 {
     public interface IClientService
     {

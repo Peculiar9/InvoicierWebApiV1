@@ -1,14 +1,10 @@
-﻿using InvoicierWebApiV1.Data.EntityModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace InvoicierWebApiV1.Dtos
+namespace InvoicierWebApiV1.Core.Dtos
 {
-    public class OrganizationUpdateDto
+    public class OrganizationWriteDto
     {
+        [Required]
         public string Name { get; set; }
         public string Location { get; set; }
 
@@ -17,9 +13,11 @@ namespace InvoicierWebApiV1.Dtos
         public int PostalCode { get; set; }
         public string ImageLogo { get; set; }
         
-        public virtual OrganizationAddressUpdateDto Address { get; set; }
+        public virtual OrganizationWriteDtoAddress Address { get; set; }
+
     }
-    public class OrganizationAddressUpdateDto
+
+    public class OrganizationWriteDtoAddress
     {
         public string Address1 { get; set; }
         public string Address2 { get; set; }

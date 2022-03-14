@@ -1,10 +1,10 @@
-﻿using InvoicierWebApiV1.Data.AuthModels;
-using InvoicierWebApiV1.Data.EntityModels;
-using Microsoft.EntityFrameworkCore;
+﻿using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Data.AuthModels;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-// using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
-namespace InvoicierWebApiV1
+
+namespace InvoicierWebApiV1.Infrastructure
 {
     public class InvoicierDbContext : IdentityDbContext<ApplicationUser>
     {

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using InvoicierWebApiV1.Dtos;
-using InvoicierWebApiV1.Services;
+using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoicierWebApiV1.Controllers

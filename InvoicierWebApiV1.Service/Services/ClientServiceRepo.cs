@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using InvoicierWebApiV1.Data.EntityModels;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
+using InvoicierWebApiV1.Services;
 
-
-namespace InvoicierWebApiV1.Services
+namespace InvoicierWebApiV1.Infrastructure.Service
 {
     public class ClientServiceRepo : IClientService
     {
@@ -20,10 +21,10 @@ namespace InvoicierWebApiV1.Services
         }
         public async Task<IEnumerable<Client>> GetClients()
         {
-            var clientList = _context.Clients.ToList();
+            var clientList = ((IEnumerable<Client>)_context.Clients).ToList();
             return clientList;
         }
-         public async Task<Client> GetClientsById(int id)
+        public async Task<Client> GetClientsById(int id)
         {
            return _context.Clients.FirstOrDefault(p => p.Id == id);
         }
@@ -44,9 +45,10 @@ namespace InvoicierWebApiV1.Services
 
         public async Task<bool> SaveChanges()
         {
-             return ( await _context.SaveChangesAsync() >= 0);
+             return (await _context.SaveChangesAsync() >= 0);
         }
     }
 }
 
        
+    

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace InvoicierWebApiV1.Data.EntityModels
+namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class Organization
     {
