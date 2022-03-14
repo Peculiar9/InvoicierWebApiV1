@@ -56,10 +56,16 @@ namespace InvoicierWebApiV1.Services
             }
         }
 
-        public Task UpdateOrganization(Organization Organization)
+        public async Task UpdateOrganization(Organization Organization)
         {
-            throw new NotImplementedException();
+            if (Organization == null)
+            {
+                throw new ArgumentNullException("No input, hence no changes", nameof(Organization.Name));
+            }
+           await _dbcontext.AddAsync(Organization);
         }
+    
+            
 
         public bool SaveChanges()
         {

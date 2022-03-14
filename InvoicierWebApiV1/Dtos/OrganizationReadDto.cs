@@ -19,7 +19,7 @@ namespace InvoicierWebApiV1.Dtos
         public string Email { get; set; }
         public string ImageLogo { get; set; }
         [Required]
-        public virtual OrganizationAddress Address { get; set; }
+        public virtual OrganizationAddressReadDto Address { get; set; }
     }
 
     public class OrganizationAddressReadDto

@@ -18,6 +18,8 @@ namespace InvoicierWebApiV1.Profiles
             CreateMap<Organization, OrganizationUpdateDto>();
             CreateMap<Invoice, InvoiceReadDto>();
             CreateMap<InvoiceCreateDto, Invoice>();
+            CreateMap<ClientCreateDto, Client>();
+            CreateMap<OrganizationAddressUpdateDto, OrganizationAddress>();
             
         }
     }

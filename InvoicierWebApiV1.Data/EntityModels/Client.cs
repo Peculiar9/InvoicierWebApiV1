@@ -14,7 +14,6 @@ namespace InvoicierWebApiV1.Data.EntityModels
         [Required(ErrorMessage = "Organization is required")]
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
-        public Organization Organization { get; set; }
         [Required(ErrorMessage = "Address is required")]
         public string Address { get; set; }
         [Required(ErrorMessage = "Email is required")]

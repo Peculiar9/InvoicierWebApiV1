@@ -11,8 +11,13 @@ namespace InvoicierWebApiV1.Dtos
     {
         public string Name { get; set; }
         public string Location { get; set; }
+
+        [Required]
         public string Email { get; set; }
-        public virtual OrganizationAddressUpdateDto OrganizationAddress { get; set; }
+        public int PostalCode { get; set; }
+        public string ImageLogo { get; set; }
+        
+        public virtual OrganizationAddressUpdateDto Address { get; set; }
     }
     public class OrganizationAddressUpdateDto
     {
@@ -22,7 +27,5 @@ namespace InvoicierWebApiV1.Dtos
         public int Zipcode { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
-
-        public virtual OrganizationUpdateDto Organization { get; set; }
     }
 }
