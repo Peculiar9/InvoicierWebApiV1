@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoicierWebApiV1.Data.EntityModels
+namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class OrganizationAddress
     {

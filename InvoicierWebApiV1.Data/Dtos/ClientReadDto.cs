@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InvoicierWebApiV1.Dtos
+namespace InvoicierWebApiV1.Core.Dtos
 {
     public class ClientReadDto
     {

@@ -1,6 +1,6 @@
+using InvoicierWebApiV1.Core.EntityModels;
 using System;
 using System.ComponentModel.DataAnnotations;
-using InvoicierWebApiV1.Data.EntityModels;
 
 namespace InvoicierWebApiV1.Dtos.InvoiceDtos
 {

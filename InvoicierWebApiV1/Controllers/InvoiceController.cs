@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
 using InvoicierWebApiV1.Dtos.InvoiceDtos;
-using InvoicierWebApiV1.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +16,11 @@ namespace InvoicierWebApiV1.Controllers
     [Route("api/invoice")]
     public class InvoiceController : ControllerBase
     {
-        public InvoiceService Service { get; }
+        public IInvoiceService Service { get; }
 
         private IMapper _mapper;
 
-        public InvoiceController(InvoiceService service, IMapper mapper)
+        public InvoiceController(IInvoiceService service, IMapper mapper)
         {
             Service = service;
             _mapper = mapper;

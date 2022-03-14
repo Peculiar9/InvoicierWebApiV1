@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using InvoicierWebApiV1.Data.EntityModels;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
+using InvoicierWebApiV1.Infrastructure;
 
 namespace InvoicierWebApiV1.Services
 {
-    public class InvoiceServiceRepo : InvoiceService
+    public class InvoiceServiceRepo : IInvoiceService
     {
         private readonly InvoicierDbContext _context;
 
@@ -16,9 +18,9 @@ namespace InvoicierWebApiV1.Services
         }
         public async Task<IEnumerable<Invoice>> GetInvoices()
         {
-            var invoices = _context.Invoices.ToList();
+            
            
-            return invoices;
+            return ((IEnumerable<Invoice>)_context.Invoices).ToList();
         }
         public async Task CreateInvoice(Invoice model)
         { 
@@ -28,7 +30,7 @@ namespace InvoicierWebApiV1.Services
                 {
                     await _context.AddAsync(model);
                 }
-                catch (System.Exception ex)
+                catch (Exception ex)
                 {
                     throw new ArgumentNullException(ex.ToString(), nameof(model));
                 }

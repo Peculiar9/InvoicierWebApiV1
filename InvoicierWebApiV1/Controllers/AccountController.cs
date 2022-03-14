@@ -13,6 +13,7 @@ using System.Security.Claims;
 using System.Collections.Generic;
 using InvoicierWebApiV1.Dtos;
 using System.Linq;
+using InvoicierWebApiV1.Core.Dtos;
 
 namespace InvoicierWebApiV1.Controllers
 {
@@ -118,7 +119,7 @@ namespace InvoicierWebApiV1.Controllers
                 var token = new JwtSecurityToken(
                     issuer: _configuration["JWT:ValidIssuer"],
                     audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(5),
+                    expires: DateTime.Now.AddHours(10000),
                     claims: authClaims,
                     signingCredentials: new SigningCredentials(authSigninKey, SecurityAlgorithms.HmacSha256)
                     );

@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using InvoicierWebApiV1.Dtos;
-using InvoicierWebApiV1.Services;
+using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InvoicierWebApiV1.Controllers
@@ -47,16 +47,7 @@ namespace InvoicierWebApiV1.Controllers
          public async Task<IActionResult> CreateClient([FromBody]ClientCreateDto clientModelDto)
         {
             var clientModel = _mapper.Map<Client>(clientModelDto);
-            //var organizationModel = new Organization();
-            //var clientModel = new Client {
-            //    FirstName = clientModelDto.FirstName,
-            //    LastName = clientModelDto.LastName,
-            //    Email = clientModelDto.Email,
-            //    BankAccount = clientModelDto.BankAccount,
-            //    Status = clientModelDto.Status,
-            //    Address = clientModelDto.Address,
-            //    OrganizationId = clientModelDto.OrganizationId,
-            //};
+            
              await _service.CreateClient(clientModel);
              await _service.SaveChanges();
              if(clientModel != null){

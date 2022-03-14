@@ -1,11 +1,8 @@
-﻿using InvoicierWebApiV1.Data.EntityModels;
-using System;
+﻿using InvoicierWebApiV1.Core.EntityModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoicierWebApiV1.Service.OrganizationServices
+namespace InvoicierWebApiV1.Core.Interfaces.OrganizationServices
 {
     public interface IOrganizationServices
     {

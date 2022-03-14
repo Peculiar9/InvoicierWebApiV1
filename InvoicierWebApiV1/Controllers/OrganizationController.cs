@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using InvoicierWebApiV1.Dtos;
-using InvoicierWebApiV1.Service.OrganizationServices;
+using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -12,12 +12,12 @@ namespace InvoicierWebApiV1.Controllers
 {
 
     [ApiController]
-    //[Authorize(Roles = UserRoles.Admin)]
+    [Authorize(Roles = UserRoles.Admin)]
     //[Authorize]
     [Route("api/Organizations")]
     public class OrganizationController : ControllerBase
     {
-        private readonly IMapper _mapper;
+        private readonly IMapper _mapper; 
         private readonly IOrganizationServices _service;
         private readonly IWebHostEnvironment _webhost;
 
@@ -95,25 +95,5 @@ namespace InvoicierWebApiV1.Controllers
         }
 
 
-
-        //Image Upload Controller
-
-
-        //public async Task<string> ImageUpload(IFormFile image, HttpContext httpContext)
-        //{
-        //    string fileName = new string(
-        //       Path.GetFileNameWithoutExtension(image.FileName)
-        //       .Take(10)
-        //       .ToArray())
-        //       .Replace(' ', '-');
-        //    fileName = fileName + DateTime.Now.ToString("yymmssfff") + Path.GetExtension(image.FileName);
-        //    var imagePath = Path.Combine(_webhost.ContentRootPath, "Images", fileName);
-        //    using (var fileStream = new FileStream(imagePath, FileMode.Create))
-        //    {
-        //        await image.CopyToAsync(fileStream);
-        //    }
-        //    return fileName;
-          
-        //}
     }   
 }

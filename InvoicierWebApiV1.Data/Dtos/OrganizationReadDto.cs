@@ -1,35 +1,33 @@
-﻿using AutoMapper;
-using InvoicierWebApiV1.Data.EntityModels;
-using System;
-using System.Collections.Generic;
+﻿using InvoicierWebApiV1.Core.EntityModels;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace InvoicierWebApiV1.Dtos
+namespace InvoicierWebApiV1.Core.Dtos
 {
-    public class OrganizationWriteDto
-    {
+    public class OrganizationReadDto
+    { [Key]
+        public int OrganizationId { get; set; }
         [Required]
         public string Name { get; set; }
         public string Location { get; set; }
-
+        //public string Address { get; set; }
         [Required]
         public string Email { get; set; }
-        public int PostalCode { get; set; }
         public string ImageLogo { get; set; }
-        
-        public virtual OrganizationWriteDtoAddress Address { get; set; }
-
+        [Required]
+        public virtual OrganizationAddressReadDto Address { get; set; }
     }
 
-    public class OrganizationWriteDtoAddress
+    public class OrganizationAddressReadDto
     {
+        [Key]
+        public int Id { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string City { get; set; }
         public int Zipcode { get; set; }
         public string State { get; set; }
         public string Country { get; set; }
+
+        public virtual Organization Organization { get; set; }
     }
 }
