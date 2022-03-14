@@ -1,7 +1,7 @@
 ﻿using InvoicierWebApiV1.Data.AuthModels;
-using InvoicierWebApiV1.Data.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using InvoicierWebApiV1.Core.EntityModels;
 // using Microsoft.EntityFrameworkCore;
 
 namespace InvoicierWebApiV1

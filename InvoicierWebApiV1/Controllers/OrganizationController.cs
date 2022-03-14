@@ -13,7 +13,6 @@ namespace InvoicierWebApiV1.Controllers
 
     [ApiController]
     [Authorize(Roles = UserRoles.Admin)]
-    //[Authorize]
     [Route("api/Organizations")]
     public class OrganizationController : ControllerBase
     {
@@ -28,7 +27,7 @@ namespace InvoicierWebApiV1.Controllers
             this._webhost = webHostEnvironment;
         }
 
-        // GET 
+        // GET api/Organization
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {
@@ -56,7 +55,7 @@ namespace InvoicierWebApiV1.Controllers
             var organizationModel = _mapper.Map<Organization>(organizationWriteDto);
 
             await _service.CreateOrganization(organizationModel);
-            _service.SaveChanges();
+            if(!_service.SaveChanges()) return BadRequest();
 
             var organizationReadDto = _mapper.Map<OrganizationReadDto>(organizationModel);
             return CreatedAtRoute(nameof(OrganizationById), new { Id = organizationReadDto.OrganizationId }, organizationReadDto);
@@ -74,12 +73,10 @@ namespace InvoicierWebApiV1.Controllers
             _mapper.Map(updateDto, organizationModelFromDto);
 
             await _service.UpdateOrganization(organizationModelFromDto);
-
-            _service.SaveChanges();
-
-            return NoContent();
+            if (!_service.SaveChanges()) return BadRequest();
+            return CreatedAtRoute(nameof(OrganizationById), new { Id = updateDto.Name }, updateDto); ;
         }
-
+            
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -90,10 +87,12 @@ namespace InvoicierWebApiV1.Controllers
                 return NotFound();
             }
             await _service.DeleteOrganization(organizationFromRepo);
-            _service.SaveChanges();
+            if(!_service.SaveChanges()) return BadRequest();
             return Ok();
         }
-
-
     }   
 }
+
+
+
+
