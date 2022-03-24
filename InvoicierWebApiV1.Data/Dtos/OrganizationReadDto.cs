@@ -1,33 +1,40 @@
 ﻿using InvoicierWebApiV1.Core.EntityModels;
+using InvoicierWebApiV1.Core.Interfaces;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace InvoicierWebApiV1.Core.Dtos
 {
     public class OrganizationReadDto
-    { [Key]
+
+    {
+        private readonly IClientService _services;
+        
+        public OrganizationReadDto(Organization organization, List<ClientReadDto> clientList, OrganizationAddress address)
+        {
+            Clients = clientList;
+            OrganizationId = organization.OrganizationId;
+            Name = organization.Name;
+            Location = organization.Location; 
+            Email = organization.Email;
+            ImageLogo = organization.ImageLogo;
+            Address = address;
+        }
+        
+        
+        
+        [Key]
         public int OrganizationId { get; set; }
         [Required]
         public string Name { get; set; }
         public string Location { get; set; }
-        //public string Address { get; set; }
         [Required]
+        public List<ClientReadDto> Clients { get; set; }   
         public string Email { get; set; }
         public string ImageLogo { get; set; }
-        [Required]
-        public virtual OrganizationAddressReadDto Address { get; set; }
+        public object Address { get; set; }
     }
 
-    public class OrganizationAddressReadDto
-    {
-        [Key]
-        public int Id { get; set; }
-        public string Address1 { get; set; }
-        public string Address2 { get; set; }
-        public string City { get; set; }
-        public int Zipcode { get; set; }
-        public string State { get; set; }
-        public string Country { get; set; }
-
-        public virtual Organization Organization { get; set; }
-    }
+  
 }

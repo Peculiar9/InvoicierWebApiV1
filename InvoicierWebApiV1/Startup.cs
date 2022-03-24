@@ -1,5 +1,7 @@
 using InvoicierWebApiV1.Core.Interfaces;
 using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
+using InvoicierWebApiV1.Core.Interfaces.UseCases;
+using InvoicierWebApiV1.Core.Services.UseCases;
 using InvoicierWebApiV1.Data.AuthModels;
 using InvoicierWebApiV1.Infrastructure;
 using InvoicierWebApiV1.Infrastructure.Service;
@@ -71,8 +73,9 @@ namespace InvoicierWebApiV1
             services.AddScoped<IOrganizationServices, OrganizationService>();
             services.AddScoped<IInvoiceService, InvoiceServiceRepo>();
             services.AddScoped<IClientService, ClientServiceRepo>();
+            services.AddScoped<IOrganizationUsecase, OrganizationUseCase>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-             services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(c =>
              {
                  c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvoicierWebApiV1", Version = "v1" });
                  var securityScheme = new OpenApiSecurityScheme

@@ -10,7 +10,7 @@ namespace InvoicierWebApiV1.Profiles
         public OrganizationsProfile()
         {
             //Source => Destination
-            CreateMap<OrganizationAddress, OrganizationAddressReadDto>();
+            //CreateMap<OrganizationAddress, OrganizationAddressReadDto>();
             CreateMap<OrganizationWriteDtoAddress, OrganizationAddress>();
             CreateMap<Organization, OrganizationReadDto>();
             CreateMap<OrganizationWriteDto, Organization>();
@@ -19,6 +19,7 @@ namespace InvoicierWebApiV1.Profiles
             CreateMap<Invoice, InvoiceReadDto>();
             CreateMap<InvoiceCreateDto, Invoice>();
             CreateMap<ClientCreateDto, Client>();
+            CreateMap<Client, ClientReadDto>();
             CreateMap<OrganizationAddressUpdateDto, OrganizationAddress>();
             
         }

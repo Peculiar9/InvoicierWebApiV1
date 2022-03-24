@@ -17,9 +17,12 @@ namespace InvoicierWebApiV1.Infrastructure.Service
         }
         public async Task<IEnumerable<Organization>> GetOrganizations()
         {
-            return ((IEnumerable<Organization>)_dbcontext.Organizations).ToList();
+            return _dbcontext.Organizations.ToList();
         }
-
+        public async Task<IEnumerable<OrganizationAddress>> GetOrganizationAddresses()
+        {
+            return _dbcontext.OrganizationsAddress.ToList();
+        }
         public async Task<Organization> GetOrganizationById(int id)
         {
             return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
@@ -29,10 +32,7 @@ namespace InvoicierWebApiV1.Infrastructure.Service
         {
             if (Organization != null)
             {
-                try
-                {
-                    await _dbcontext.AddAsync(Organization);
-                }
+                try{ await _dbcontext.AddAsync(Organization);}
                 catch (Exception ex)
                 {
                     throw new ArgumentNullException(ex.ToString(), nameof(Organization));
@@ -72,5 +72,6 @@ namespace InvoicierWebApiV1.Infrastructure.Service
             return (_dbcontext.SaveChanges() >= 0);
         }
 
+       
     }
 }
