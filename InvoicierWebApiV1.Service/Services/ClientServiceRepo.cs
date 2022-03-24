@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using InvoicierWebApiV1.Core.EntityModels;
 using InvoicierWebApiV1.Core.Interfaces;
-using InvoicierWebApiV1.Services;
 
 namespace InvoicierWebApiV1.Infrastructure.Service
 {

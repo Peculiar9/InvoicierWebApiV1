@@ -22,4 +22,8 @@
     <ProjectReference Include="..\InvoicierWebApiV1.Data\InvoicierWebApiV1.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\UseCases\" />
+  </ItemGroup>
+
 </Project>

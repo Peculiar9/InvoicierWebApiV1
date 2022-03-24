@@ -11,7 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Security.Claims;
 using System.Collections.Generic;
-using InvoicierWebApiV1.Dtos;
 using System.Linq;
 using InvoicierWebApiV1.Core.Dtos;
 

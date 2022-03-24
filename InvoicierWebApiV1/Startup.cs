@@ -1,6 +1,7 @@
 using InvoicierWebApiV1.Core.Interfaces;
 using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using InvoicierWebApiV1.Data.AuthModels;
+using InvoicierWebApiV1.Infrastructure;
 using InvoicierWebApiV1.Infrastructure.Service;
 using InvoicierWebApiV1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -33,7 +34,7 @@ namespace InvoicierWebApiV1
             var configString = Configuration.GetConnectionString("InvoicierConnection");
             services.AddDbContext<InvoicierDbContext>(options => 
             options.UseSqlServer(configString));
-             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredLength = 8;
                 options.Password.RequireLowercase = false;
@@ -66,12 +67,11 @@ namespace InvoicierWebApiV1
 
                     };
                 });
-            
-             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-             services.AddScoped<IOrganizationServices, Infrastructure.Service.OrganizationService>();
-             services.AddScoped<IInvoiceService, InvoiceServiceRepo>();
-             services.AddScoped<IClientService, ClientServiceRepo>();
-             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<IOrganizationServices, OrganizationService>();
+            services.AddScoped<IInvoiceService, InvoiceServiceRepo>();
+            services.AddScoped<IClientService, ClientServiceRepo>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
              services.AddSwaggerGen(c =>
              {
                  c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvoicierWebApiV1", Version = "v1" });
