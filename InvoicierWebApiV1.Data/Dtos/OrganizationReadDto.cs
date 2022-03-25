@@ -21,7 +21,10 @@ namespace InvoicierWebApiV1.Core.Dtos
             ImageLogo = organization.ImageLogo;
             Address = address;
         }
-        
+        public OrganizationReadDto()
+        {
+
+        }
         
         
         [Key]

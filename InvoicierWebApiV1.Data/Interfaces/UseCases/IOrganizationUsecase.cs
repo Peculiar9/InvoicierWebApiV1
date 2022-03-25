@@ -7,9 +7,9 @@ namespace InvoicierWebApiV1.Core.Interfaces.UseCases
     public interface IOrganizationUsecase
     {
         Task<Response> GetOrganizations();
-        Task<bool> CreateOrganization();
-        Task<bool> DeleteOrganization(string organizationId);
-        Task<bool> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel);
+        Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto);
+        Task<Response> DeleteOrganization(string organizationId);
+        Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel);
         
     }
 }

@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace InvoicierWebApiV1
 {
@@ -32,6 +33,11 @@ namespace InvoicierWebApiV1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddControllers().AddJsonOptions(options => 
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.WriteIndented = true;
+            });
 
             var configString = Configuration.GetConnectionString("InvoicierConnection");
             services.AddDbContext<InvoicierDbContext>(options => 
@@ -44,7 +50,7 @@ namespace InvoicierWebApiV1
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireDigit = false;
                 options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = false;
+                options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<InvoicierDbContext>()
                 .AddDefaultTokenProviders();

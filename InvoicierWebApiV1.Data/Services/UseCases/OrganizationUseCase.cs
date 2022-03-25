@@ -23,16 +23,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             _service = organizationService;
             _mapper = mapper;
         }
-        public Task<bool> CreateOrganization()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteOrganization(string organizationId)
-        {
-            throw new NotImplementedException();
-        }
-            
+     
 
         public async Task<Response> GetOrganizations()
         {
@@ -61,8 +52,32 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed(err.Message);
             }
         }
+        public async Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto)
+        {
+            try
+            {
+            var response = new Response();
+            var organizationModel = _mapper.Map<Organization>(organizationWriteDto);
+            await _service.CreateOrganization(organizationModel);
+            var organizationReadDto = _mapper.Map<OrganizationReadDto>(organizationModel); ;
+            response.Data = organizationReadDto ?? new object();
+                if (_service.SaveChanges()) response.StatusCode = 200; return response;
         
-        public Task<bool> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+            }
+            catch (Exception ex)
+            {
+                return new Response().failed(ex.InnerException.ToString(), null , ResponseType.ServerError);
+                throw;
+            }
+            return new Response().failed($"Unable to save {organizationWriteDto.Name} try again later", null, ResponseType.ServerError);
+        }
+        public Task<Response> DeleteOrganization(string organizationId)
+        {
+            throw new NotImplementedException();
+        }
+            
+        
+        public Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
         {
             throw new NotImplementedException();
         }
