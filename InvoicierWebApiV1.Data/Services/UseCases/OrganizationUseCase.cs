@@ -36,6 +36,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
          
             var clients = new List<ClientReadDto>();
             var address = new OrganizationAddress();
+               
             if (organizations.ToList().Count < 1) 
                 return new Response().failed("Failed");
             organizations.ToList().ForEach(x => {
@@ -44,6 +45,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });
             var response = new List<OrganizationReadDto>();
+            
             response.AddRange(organizationsList);
             return new Response().success("Successful", response);
             }
@@ -52,6 +54,31 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed(err.Message);
             }
         }
+        public async Task<Response> GetOrganizationById(int id)
+        {
+            var response = new Response();
+            var message = "";
+            try
+            {
+                var organizationItem = await _service.GetOrganizationById(id);
+                var clients = new List<ClientReadDto>();
+                var clientsFromList = await _clientService.GetClients();
+                var clientsfromService = _mapper.Map<List<ClientReadDto>>(clientsFromList);
+                clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == organizationItem.OrganizationId).ToList();
+                var organization = new OrganizationReadDto(organizationItem, clients, organizationItem.Address);
+                if (organizationItem != null)
+                {
+                    return response.success("successful request", organization);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+            return response.failed($"failed request: {message}");
+         } 
+           
         public async Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto)
         {
             try
@@ -71,9 +98,22 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
             return new Response().failed($"Unable to save {organizationWriteDto.Name} try again later", null, ResponseType.ServerError);
         }
-        public Task<Response> DeleteOrganization(string organizationId)
+        public async Task<Response> DeleteOrganization(int organizationId)
         {
-            throw new NotImplementedException();
+            Response response = new Response();
+            try
+            {
+                var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+                if (organizationFromRepo == null)
+                {
+                    return response.failed("Organization Not Found", ResponseType.NotFound);
+                }
+                
+                await _service.DeleteOrganization(organizationFromRepo);
+                if (!_service.SaveChanges()) return response.failed("Not deleted successful try again!!", ResponseType.ServerError); 
+                return response.success("Successfully deleted");
+            }
+            catch(Exception ex) { return response.failed(ex.Message, ResponseType.ServerError); };
         }
             
         
@@ -84,6 +124,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
 
        
     }
-    
-  
 }
+    
+
+  

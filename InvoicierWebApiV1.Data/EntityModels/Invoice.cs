@@ -1,15 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using InvoicierWebApiV1.Dtos.InvoiceDtos;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class Invoice
     {
+        public Invoice(InvoiceCreateDto invoice)
+        {
+           
+            InvoiceNumber = invoice.InvoiceNumber;
+            Discount = invoice.Discount;
+            CreatedOn = invoice.CreatedOn;
+            ExpiredOn = invoice.ExpiredOn;
+            Comment = invoice.Comment ?? "";
+            Concept = invoice.Concept ?? "";
+            IsPaid = invoice.IsPaid;
+            Price = invoice.Price;
+            Total = invoice.Total;
+            OrganizationId = invoice.OrganizationId;
+
+        }
+        public Invoice()
+        {
+
+        }
         [Key]
         public int Id { get; set; }
         public string InvoiceNumber { get; set; }

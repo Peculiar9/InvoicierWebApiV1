@@ -30,9 +30,9 @@ namespace InvoicierWebApiV1.Core.Shared
             var response = new Response();
             if (data == null)
             {
-                response.Message = $"Successful Add {nameof(data)} ";
+                response.Message = $"Not Successful try again {nameof(data)} ";
             }
-            response.Message = "Successful Request";
+            response.Message = "Request was not successful";
             response.Data = data;
             response.StatusCode = (int)statuscode.Value;
             return response;

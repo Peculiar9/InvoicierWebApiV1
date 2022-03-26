@@ -80,6 +80,7 @@ namespace InvoicierWebApiV1
             services.AddScoped<IInvoiceService, InvoiceServiceRepo>();
             services.AddScoped<IClientService, ClientServiceRepo>();
             services.AddScoped<IOrganizationUsecase, OrganizationUseCase>();
+            services.AddScoped<IInvoiceUseCase, InvoiceUseCase>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
              {
