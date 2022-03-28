@@ -1,27 +1,29 @@
-﻿using InvoicierWebApiV1.Dtos.InvoiceDtos;
+﻿using InvoicierWebApiV1.Core.Interfaces;
+using InvoicierWebApiV1.Dtos.InvoiceDtos;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading.Tasks;
 
 namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class Invoice
     {
+    
         public Invoice(InvoiceCreateDto invoice)
         {
-           
-            InvoiceNumber = invoice.InvoiceNumber;
+            
+           TimeSpan timeSpan = new TimeSpan(3, 0, 0, 0);
             Discount = invoice.Discount;
             CreatedOn = invoice.CreatedOn;
-            ExpiredOn = invoice.ExpiredOn;
+            ExpiredOn = CreatedOn.Add(timeSpan);
             Comment = invoice.Comment ?? "";
             Concept = invoice.Concept ?? "";
             IsPaid = invoice.IsPaid;
             Price = invoice.Price;
             Total = invoice.Total;
-            OrganizationId = invoice.OrganizationId;
-
         }
+
         public Invoice()
         {
 

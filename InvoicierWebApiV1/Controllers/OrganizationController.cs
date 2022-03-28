@@ -55,8 +55,7 @@ namespace InvoicierWebApiV1.Controllers
         [Route("create")]
         public async Task<IActionResult> CreateOrganization(OrganizationWriteDto organizationWriteDto)
         {
-            var response = await _service.CreateOrganization(organizationWriteDto);
-            var organizationRead = new OrganizationReadDto();
+            var response = await _service.CreateOrganization(organizationWriteDto);        
             if (response.StatusCode == 200)
             {
                 return Created(nameof(OrganizationById), (OrganizationReadDto)response.Data);
@@ -68,23 +67,23 @@ namespace InvoicierWebApiV1.Controllers
 
 
 
-        //[HttpPut("{id}")]
-        //[Authorize]
-        //public async Task<IActionResult> Update(int id, OrganizationUpdateDto updateDto)
-        //{
-        //    var organizationModelFromDto = await _service.GetOrganizationById(id);
-        //    if (organizationModelFromDto == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    _mapper.Map(updateDto, organizationModelFromDto);
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> Update(int id, OrganizationUpdateDto updateDto)
+        {
+            var organizationModelFromDto = await _service.GetOrganizationById(id);
+            if (organizationModelFromDto == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(updateDto, organizationModelFromDto);
 
-        //    await _service.UpdateOrganization(organizationModelFromDto);
+            await _service.UpdateOrganization(id, (OrganizationUpdateDto)organizationModelFromDto.Data);
 
-        //    _service.SaveChanges();
+            
 
-        //    return NoContent();
-        //}
+            return NoContent();
+        }
 
         [Authorize]
         [HttpDelete("{id}")]

@@ -14,10 +14,12 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
     public class InvoiceUseCase : IInvoiceUseCase
     {
         private IInvoiceService _services;
+        private IClientService _clientService;
 
-        public InvoiceUseCase(IInvoiceService service)
+        public InvoiceUseCase(IInvoiceService service, IClientService clientService)
         {
             _services = service;
+            _clientService = clientService;
         }
         public async Task<Response> GetInvoices()
         {
@@ -35,14 +37,26 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 throw;
             }
         }
+        public async Task<Response> MailInvoices(string email)
+        {
+            return new Response().failed("Email not successful");
+        }
         public string InvoiceNumberGenerate()
         {
             var invoiceNo = "";
-            var rand = new Random();
-            var dateTimeString = new DateTime().Minute;
+            var rand = new Random().Next(0, 20);
+            var dateTimeString = new DateTime().Day + new DateTime().Minute;
             invoiceNo = $"IV{dateTimeString} {rand}";
             return invoiceNo;
         }
+     
+        public async Task<int> GetOrganizationId(int clientId)
+        {
+            var client = await _clientService.GetClientsById(clientId);
+            if (client != null) return client.OrganizationId;
+            else return 1;
+        }
+
         public async Task<Response> CreateInvoice(InvoiceCreateDto invoiceModel)
         {
             Response response = new Response();
@@ -54,10 +68,12 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             try
             {
                 var mappedInvoice = new Invoice(invoiceModel);
+                mappedInvoice.InvoiceNumber = InvoiceNumberGenerate();
+                mappedInvoice.OrganizationId = await GetOrganizationId(invoiceModel.clientId);
+                mappedInvoice.client = await _clientService.GetClientsById(invoiceModel.clientId);
                 await _services.CreateInvoice(mappedInvoice);
                 if(_services.SaveChanges())
                 {
-                    mappedInvoice.InvoiceNumber = InvoiceNumberGenerate();
                     return response.success($"{mappedInvoice.InvoiceNumber} created successfully");
                 }
             }

@@ -117,8 +117,16 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
         }
             
         
-        public Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+        public async Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
         {
+            var organization = _mapper.Map<Organization>(organizationModel);
+            organization.OrganizationId = organizationId;
+            await _service.UpdateOrganization(organization);
+            if(_service.SaveChanges()) return new Response().success("Successful Request", organizationId);
+            else
+            {
+                return new Response().failed("Not Successful");
+            }
             throw new NotImplementedException();
         }
 

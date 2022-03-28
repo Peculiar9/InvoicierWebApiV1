@@ -12,6 +12,7 @@ namespace InvoicierWebApiV1.Core.Interfaces.UseCases
         Task<Response> GetInvoiceById(int id);
         Task<Response> UpdateInvoice(Invoice invoice);
         Task<Response> DeleteInvoice(int id);
+        Task<Response> MailInvoices(string email);
        
     }
 }
