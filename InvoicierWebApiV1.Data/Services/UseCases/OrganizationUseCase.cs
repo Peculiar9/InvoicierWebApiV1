@@ -41,6 +41,11 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed("Failed");
             organizations.ToList().ForEach(x => {
                 clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == x.OrganizationId).ToList();
+                if(x.Address == null)
+                {
+                    x.Address.Address1 = x.Location;
+                    x.Address.Address2 = x.Location;
+                }
                 address = x.Address;
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });
@@ -64,6 +69,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 var clients = new List<ClientReadDto>();
                 var clientsFromList = await _clientService.GetClients();
                 var clientsfromService = _mapper.Map<List<ClientReadDto>>(clientsFromList);
+                if (organizationItem == null) return response.failed("Organization does not exist");
                 clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == organizationItem.OrganizationId).ToList();
                 var organization = new OrganizationReadDto(organizationItem, clients, organizationItem.Address);
                 if (organizationItem != null)
@@ -98,6 +104,23 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
             return new Response().failed($"Unable to save {organizationWriteDto.Name} try again later", null, ResponseType.ServerError);
         }
+        public async Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+        {
+            Response response = new Response();
+            var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+            if (organizationFromRepo == null)
+            {
+                return response.failed("Not Found");
+            }
+            _mapper.Map(organizationModel, organizationFromRepo);
+            await _service.UpdateOrganization(organizationFromRepo);
+            if (_service.SaveChanges()) return new Response().success("Successful Request", organizationId);
+            else
+            {
+                return new Response().failed("Not Successful");
+            }
+
+        }
         public async Task<Response> DeleteOrganization(int organizationId)
         {
             Response response = new Response();
@@ -117,18 +140,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
         }
             
         
-        public async Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
-        {
-            var organization = _mapper.Map<Organization>(organizationModel);
-            organization.OrganizationId = organizationId;
-            await _service.UpdateOrganization(organization);
-            if(_service.SaveChanges()) return new Response().success("Successful Request", organizationId);
-            else
-            {
-                return new Response().failed("Not Successful");
-            }
-            throw new NotImplementedException();
-        }
+      
 
        
     }

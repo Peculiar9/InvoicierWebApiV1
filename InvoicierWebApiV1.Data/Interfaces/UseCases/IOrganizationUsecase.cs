@@ -1,4 +1,5 @@
 ﻿using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.EntityModels;
 using InvoicierWebApiV1.Core.Shared;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace InvoicierWebApiV1.Core.Interfaces.UseCases
         Task<Response> GetOrganizationById(int id);
         Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto);
         Task<Response> DeleteOrganization(int organizationId);
-        Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel);
+        Task<Response> UpdateOrganization(int id, OrganizationUpdateDto organizationModel);
         
     }
 }

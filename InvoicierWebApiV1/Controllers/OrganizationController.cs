@@ -71,19 +71,25 @@ namespace InvoicierWebApiV1.Controllers
         [Authorize]
         public async Task<IActionResult> Update(int id, OrganizationUpdateDto updateDto)
         {
-            var organizationModelFromDto = await _service.GetOrganizationById(id);
-            if (organizationModelFromDto == null)
+           var response =  await _service.UpdateOrganization(id, updateDto);
+            if (response.StatusCode == 404)
             {
                 return NotFound();
             }
-            _mapper.Map(updateDto, organizationModelFromDto);
+            else if(response.StatusCode == 200)
+            {
+            return NoContent();
 
-            await _service.UpdateOrganization(id, (OrganizationUpdateDto)organizationModelFromDto.Data);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
 
             
 
-            return NoContent();
-        }
+
 
         [Authorize]
         [HttpDelete("{id}")]

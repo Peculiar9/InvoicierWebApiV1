@@ -6,12 +6,9 @@ namespace InvoicierWebApiV1.Core.Dtos
     {
         public string Name { get; set; }
         public string Location { get; set; }
-
         [Required]
         public string Email { get; set; }
-        public int PostalCode { get; set; }
         public string ImageLogo { get; set; }
-        
         public virtual OrganizationAddressUpdateDto Address { get; set; }
     }
     public class OrganizationAddressUpdateDto

@@ -17,11 +17,11 @@ namespace InvoicierWebApiV1.Profiles
             CreateMap<OrganizationWriteDto, Organization>();
             CreateMap<OrganizationUpdateDto, Organization>();
             CreateMap<Organization, OrganizationUpdateDto>();
+            CreateMap<OrganizationAddressUpdateDto, OrganizationAddress>();
             CreateMap<Invoice, InvoiceReadDto>();
             CreateMap<InvoiceCreateDto, Invoice>();
             CreateMap<ClientCreateDto, Client>();
             CreateMap<Client, ClientReadDto>();
-            CreateMap<OrganizationAddressUpdateDto, OrganizationAddress>();
         }
     }
 }
