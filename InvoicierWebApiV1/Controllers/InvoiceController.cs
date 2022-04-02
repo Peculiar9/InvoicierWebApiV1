@@ -54,7 +54,7 @@ namespace InvoicierWebApiV1.Controllers
        }
 
 
-       [HttpPost]
+        [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateInvoice([FromBody] InvoiceCreateDto invoiceModelDto)
         {
@@ -62,37 +62,41 @@ namespace InvoicierWebApiV1.Controllers
             var data = invoiceModelDto;
              if(response.StatusCode == 200) return Created(nameof(InvoiceCreateDto.clientId), data);
             if (!string.IsNullOrEmpty(((InvoiceCreateDto)response.Data).Email)) 
-                _service.MailInvoices(((InvoiceCreateDto)response.Data).Email);
+                await _service.MailInvoices(((InvoiceCreateDto)response.Data).Email);
             return BadRequest(response);    
         }
 
-        
-             
 
 
 
-        //[HttpDelete]
-        //[Route("remove")]
-        //public async Task<IActionResult> DeleteInvoice(int id)
-        //{ 
-        //var invoiceModelFromRepo = await Service.GetInvoiceById(id);
-        // if (invoiceModelFromRepo == null)
-        // {
-        //     return NotFound();
-        // }
-        // await Service.RemoveInvoice(invoiceModelFromRepo);
-        //   Service.SaveChanges();
-        //   if(Service.SaveChanges() == true){
-        //    return Ok( new Response{
-        //        Status = "Successful",
-        //        Message = "Invoice Deleted Successfully"
-        //    });
-        //   }
-        //   else{
-        //       return new StatusCodeResult(401);
-        //   }
 
-        //}
+
+
+        [HttpDelete]
+        [Route("remove")]
+        public async Task<IActionResult> DeleteInvoice(int id)
+        {
+            var invoiceModelFromRepo = await _service.GetInvoiceById(id);
+            if (invoiceModelFromRepo == null)
+            {
+                return NotFound();
+            }
+            await _service.RemoveInvoice(invoiceModelFromRepo);
+            _service.SaveChanges();
+            if (_service.SaveChanges() == true)
+            {
+                return Ok(new Response
+                {
+                    Status = "Successful",
+                    Message = "Invoice Deleted Successfully"
+                });
+            }
+            else
+            {
+                return new StatusCodeResult(401);
+            }
+
+        }
     }
     }
 

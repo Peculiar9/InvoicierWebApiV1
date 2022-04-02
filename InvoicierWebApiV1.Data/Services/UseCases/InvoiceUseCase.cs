@@ -87,14 +87,22 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
 
         }
 
-        public Task<Response> DeleteInvoice(int id)
+        public async Task<Response> DeleteInvoice(int id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+            var invoice = await _services.GetInvoiceById(id);
+            if (invoice == null)
+                return response.failed("Invoice does not Exist");
+            return response.success($"Invoice {invoice.InvoiceNumber} Deleted Successfully");
         }
 
-        public Task<Response> GetInvoiceById(int id)
+        public async Task<Response> GetInvoiceById(int id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+            var invoice = await _services.GetInvoiceById(id);
+            if (invoice == null)
+                return response.failed("Invoice does not Exist");
+            return response.success("", invoice);
         }
 
         public Task<Response> UpdateInvoice(Invoice invoice)
