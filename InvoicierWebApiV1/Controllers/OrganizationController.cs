@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using InvoicierWebApiV1.Core.Interfaces.UseCases;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -18,11 +19,12 @@ namespace InvoicierWebApiV1.Controllers
         private readonly IMapper _mapper; 
         private readonly IOrganizationUsecase _service;
         private readonly IWebHostEnvironment _webhost;
-
-        public OrganizationController(IOrganizationUsecase services, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+        private readonly IOrganizationServices _dbService;
+        public OrganizationController(IOrganizationUsecase services, IMapper mapper, IWebHostEnvironment webHostEnvironment, IOrganizationServices dbService)
         {
             _mapper = mapper;
             _service = services;
+            _dbService = dbService;
             this._webhost = webHostEnvironment;
         }
 
@@ -78,8 +80,7 @@ namespace InvoicierWebApiV1.Controllers
             }
             else if(response.StatusCode == 200)
             {
-            return NoContent();
-
+                return NoContent();
             }
             else
             {
@@ -87,7 +88,19 @@ namespace InvoicierWebApiV1.Controllers
             }
         }
 
-            
+        //[HttpPut, Route("api/update")]
+        //public async Task<IActionResult> UpdateOrg(int id, OrganizationUpdateDto organization)
+        //{
+        //    var org = await _dbService.GetOrganizationById(id);
+        //    if (org == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    _mapper.Map(organization, org);
+        //    if(!_dbService.SaveChanges()) return BadRequest();
+        //    else return NoContent();
+
+        //}
 
 
 

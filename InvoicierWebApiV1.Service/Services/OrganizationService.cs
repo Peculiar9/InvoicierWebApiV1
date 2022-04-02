@@ -58,11 +58,7 @@ namespace InvoicierWebApiV1.Infrastructure.Service
 
         public async Task UpdateOrganization(Organization Organization)
         {
-            if (Organization == null)
-            {
-                throw new ArgumentNullException("No input, hence no changes", nameof(Organization.Name));
-            }
-           await _dbcontext.AddAsync(Organization);
+           //Nothing
         }
     
             

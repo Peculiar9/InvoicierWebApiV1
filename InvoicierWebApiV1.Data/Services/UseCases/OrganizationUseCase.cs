@@ -41,11 +41,11 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed("Failed");
             organizations.ToList().ForEach(x => {
                 clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == x.OrganizationId).ToList();
-                if(x.Address == null)
-                {
-                    x.Address.Address1 = x.Location;
-                    x.Address.Address2 = x.Location;
-                }
+                //if(x.Address == null)
+                //{
+                //    x.Address.Address1 = x.Location;
+                //    x.Address.Address2 = x.Location;
+                //}
                 address = x.Address;
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });

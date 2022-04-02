@@ -31,7 +31,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
         [Key]
         public int Id { get; set; }
         public string InvoiceNumber { get; set; }
-        public string Discount { get; set;}
+        public string Discount { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ExpiredOn { get; set; }
         public string Comment { get; set; }
