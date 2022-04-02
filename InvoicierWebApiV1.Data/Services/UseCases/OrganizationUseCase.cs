@@ -38,14 +38,9 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             var address = new OrganizationAddress();
                
             if (organizations.ToList().Count < 1) 
-                return new Response().failed("Failed");
+                return new Response().success(" ", new object());
             organizations.ToList().ForEach(x => {
                 clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == x.OrganizationId).ToList();
-                //if(x.Address == null)
-                //{
-                //    x.Address.Address1 = x.Location;
-                //    x.Address.Address2 = x.Location;
-                //}
                 address = x.Address;
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });
@@ -59,6 +54,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed(err.Message);
             }
         }
+                
         public async Task<Response> GetOrganizationById(int id)
         {
             var response = new Response();

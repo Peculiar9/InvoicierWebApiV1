@@ -33,9 +33,10 @@ namespace InvoicierWebApiV1.Controllers
         public async Task<IActionResult> Index()
         {
             var response = await _service.GetOrganizations();
-            if (response.StatusCode == 200)
-              return Ok(response);
-            return NotFound(response);
+            if (response.StatusCode != 200)
+              return BadRequest(response);
+            response.Message = "No existing Organization Please Add";
+            return Ok(response);
         }
 
 
