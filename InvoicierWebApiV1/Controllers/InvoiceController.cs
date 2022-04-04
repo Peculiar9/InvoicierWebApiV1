@@ -72,31 +72,31 @@ namespace InvoicierWebApiV1.Controllers
 
 
 
-        [HttpDelete]
-        [Route("remove")]
-        public async Task<IActionResult> DeleteInvoice(int id)
-        {
-            var invoiceModelFromRepo = await _service.GetInvoiceById(id);
-            if (invoiceModelFromRepo == null)
-            {
-                return NotFound();
-            }
-            await _service.RemoveInvoice(invoiceModelFromRepo);
-            _service.SaveChanges();
-            if (_service.SaveChanges() == true)
-            {
-                return Ok(new Response
-                {
-                    Status = "Successful",
-                    Message = "Invoice Deleted Successfully"
-                });
-            }
-            else
-            {
-                return new StatusCodeResult(401);
-            }
+        //[HttpDelete]
+        //[Route("remove")]
+        //public async Task<IActionResult> DeleteInvoice(int id)
+        //{
+        //    var invoiceModelFromRepo = await _service.GetInvoiceById(id);
+        //    if (invoiceModelFromRepo == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    await _service.RemoveInvoice(invoiceModelFromRepo);
+        //    _service.SaveChanges();
+        //    if (_service.SaveChanges() == true)
+        //    {
+        //        return Ok(new Response
+        //        {
+        //            Status = "Successful",
+        //            Message = "Invoice Deleted Successfully"
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return new StatusCodeResult(401);
+        //    }
 
-        }
+        //}
     }
     }
 

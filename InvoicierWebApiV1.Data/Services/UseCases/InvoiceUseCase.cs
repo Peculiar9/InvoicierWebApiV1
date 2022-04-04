@@ -1,5 +1,6 @@
 ﻿using InvoicierWebApiV1.Core.EntityModels;
 using InvoicierWebApiV1.Core.Interfaces;
+using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using InvoicierWebApiV1.Core.Interfaces.UseCases;
 using InvoicierWebApiV1.Core.Shared;
 using InvoicierWebApiV1.Dtos.InvoiceDtos;
@@ -15,11 +16,13 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
     {
         private IInvoiceService _services;
         private IClientService _clientService;
+        private readonly IOrganizationServices _orgServices;
 
-        public InvoiceUseCase(IInvoiceService service, IClientService clientService)
+        public InvoiceUseCase(IInvoiceService service, IClientService clientService, IOrganizationServices orgServices)
         {
             _services = service;
             _clientService = clientService;
+            _orgServices = orgServices;
         }
         public async Task<Response> GetInvoices()
         {
@@ -67,15 +70,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
             try
             {
-                var mappedInvoice = new Invoice(invoiceModel);
-                mappedInvoice.InvoiceNumber = InvoiceNumberGenerate();
-                mappedInvoice.OrganizationId = await GetOrganizationId(invoiceModel.clientId);
-                mappedInvoice.client = await _clientService.GetClientsById(invoiceModel.clientId);
-                await _services.CreateInvoice(mappedInvoice);
-                if(_services.SaveChanges())
-                {
-                    return response.success($"{mappedInvoice.InvoiceNumber} created successfully");
-                }
+               
             }
             catch (Exception ex)
             {
