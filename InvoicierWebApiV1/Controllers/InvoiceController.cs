@@ -55,12 +55,12 @@ namespace InvoicierWebApiV1.Controllers
 
 
         [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceCreateDto invoiceModelDto)
+        [Route("")]
+        public async Task<IActionResult> CreateInvoice([FromBody] InvoiceCreateDto invoiceModelDto, int clientId)
         {
-            var response = await _service.CreateInvoice(invoiceModelDto);
+            var response = await _service.CreateInvoice(clientId, invoiceModelDto);
             var data = invoiceModelDto;
-             if(response.StatusCode == 200) return Created(nameof(InvoiceCreateDto.clientId), data);
+             if(response.StatusCode == 200) return Created(nameof(clientId), data);
             if (!string.IsNullOrEmpty(((InvoiceCreateDto)response.Data).Email)) 
                 await _service.MailInvoices(((InvoiceCreateDto)response.Data).Email);
             return BadRequest(response);    

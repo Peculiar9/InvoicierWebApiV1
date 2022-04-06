@@ -11,7 +11,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
     public class Invoice
     {
     
-        public Invoice(InvoiceCreateDto invoice)
+        public Invoice(InvoiceCreateDto invoice, int clientId)
         {
             
            TimeSpan timeSpan = new TimeSpan(3, 0, 0, 0);
@@ -23,6 +23,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
             IsPaid = invoice.IsPaid;
             Price = invoice.Price;
             Total = invoice.Total;
+            this.ClientId = clientId;
         }
 
         public Invoice()
@@ -38,14 +39,14 @@ namespace InvoicierWebApiV1.Core.EntityModels
         public string Comment { get; set; }
         public string Concept { get; set; }
         [Required]
-        public bool IsPaid { get; set; } 
+        public bool IsPaid { get; set; }
         [Required]
         public string Price { get; set; }
+        [ForeignKey("Client")]
+        public int ClientId { get; set; }
         public string Total { get; set; }
         [ForeignKey("Organization")]
         public int OrganizationId { get; set; }
-        public Organization Organization { get; set; }
-        public Client client { get; set; }
     }
 }
 

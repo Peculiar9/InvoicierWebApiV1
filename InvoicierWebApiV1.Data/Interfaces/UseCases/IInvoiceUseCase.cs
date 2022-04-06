@@ -8,7 +8,7 @@ namespace InvoicierWebApiV1.Core.Interfaces.UseCases
     public interface IInvoiceUseCase
     {
         Task<Response> GetInvoices();
-        Task<Response> CreateInvoice(InvoiceCreateDto invoiceModel);
+        Task<Response> CreateInvoice(int clientId, InvoiceCreateDto invoiceModel);
         Task<Response> GetInvoiceById(int id);
         Task<Response> UpdateInvoice(Invoice invoice);
         Task<Response> DeleteInvoice(int id);

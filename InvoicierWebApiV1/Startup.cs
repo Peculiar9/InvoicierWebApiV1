@@ -5,6 +5,7 @@ using InvoicierWebApiV1.Core.Services.UseCases;
 using InvoicierWebApiV1.Data.AuthModels;
 using InvoicierWebApiV1.Infrastructure;
 using InvoicierWebApiV1.Infrastructure.Service;
+using InvoicierWebApiV1.Infrastructure.Services;
 using InvoicierWebApiV1.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -81,6 +82,7 @@ namespace InvoicierWebApiV1
             services.AddScoped<IClientService, ClientServiceRepo>();
             services.AddScoped<IOrganizationUsecase, OrganizationUseCase>();
             services.AddScoped<IInvoiceUseCase, InvoiceUseCase>();
+            services.AddScoped<IInvoiceItemsService, InvoiceItemsServices>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
              {

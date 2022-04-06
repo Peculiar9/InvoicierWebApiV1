@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using InvoicierWebApiV1.Core.Dtos;
+using InvoicierWebApiV1.Core.Dtos.InvoiceDtos;
 using InvoicierWebApiV1.Core.EntityModels;
 using InvoicierWebApiV1.Dtos.InvoiceDtos;
 
@@ -22,6 +23,8 @@ namespace InvoicierWebApiV1.Profiles
             CreateMap<InvoiceCreateDto, Invoice>();
             CreateMap<ClientCreateDto, Client>();
             CreateMap<Client, ClientReadDto>();
+            CreateMap<InvoiceItems, InvoiceItemsReadDTO>();       
+            CreateMap<InvoiceItemsDTO, InvoiceItems>();       
         }
     }
 }
