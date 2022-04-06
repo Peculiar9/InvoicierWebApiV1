@@ -4,14 +4,16 @@ using InvoicierWebApiV1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    partial class InvoicierDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220406175446_InvoiceWithClientIdAsFK")]
+    partial class InvoiceWithClientIdAsFK
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -121,12 +123,10 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<double>("Title")
+                        .HasColumnType("float");
 
                     b.HasKey("ItemId");
-
-                    b.HasIndex("InvoiceId");
 
                     b.ToTable("InvoiceItems");
                 });
@@ -400,17 +400,6 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
-                });
-
-            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.InvoiceItems", b =>
-                {
-                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Invoice", "Invoice")
-                        .WithMany()
-                        .HasForeignKey("InvoiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>

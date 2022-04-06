@@ -20,7 +20,7 @@ namespace InvoicierWebApiV1.Infrastructure.Service
         }
         public async Task<IEnumerable<Client>> GetClients()
         {
-            var clientList = ((IEnumerable<Client>)_context.Clients).ToList();
+            var clientList = _context.Clients.ToList();
             return clientList;
         }
         public async Task<Client> GetClientsById(int id)

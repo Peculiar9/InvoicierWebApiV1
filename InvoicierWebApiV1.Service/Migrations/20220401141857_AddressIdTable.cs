@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
-    public partial class newMigration : Migration
+    public partial class AddressIdTable : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -66,22 +66,6 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Clients", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Organizations",
-                columns: table => new
-                {
-                    OrganizationId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageLogo = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Organizations", x => x.OrganizationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -217,12 +201,23 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         principalTable: "Clients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Invoices_Organizations_OrganizationId",
-                        column: x => x.OrganizationId,
-                        principalTable: "Organizations",
-                        principalColumn: "OrganizationId",
-                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Organizations",
+                columns: table => new
+                {
+                    OrganizationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageLogo = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Organizations", x => x.OrganizationId);
                 });
 
             migrationBuilder.CreateTable(
@@ -302,13 +297,36 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizationAddress_OrganizationId",
                 table: "OrganizationAddress",
+                column: "OrganizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizations_AddressId",
+                table: "Organizations",
+                column: "AddressId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Invoices_Organizations_OrganizationId",
+                table: "Invoices",
                 column: "OrganizationId",
-                unique: true,
-                filter: "[OrganizationId] IS NOT NULL");
+                principalTable: "Organizations",
+                principalColumn: "OrganizationId",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Organizations_OrganizationAddress_AddressId",
+                table: "Organizations",
+                column: "AddressId",
+                principalTable: "OrganizationAddress",
+                principalColumn: "AddressId",
+                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_OrganizationAddress_Organizations_OrganizationId",
+                table: "OrganizationAddress");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -328,9 +346,6 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                 name: "Invoices");
 
             migrationBuilder.DropTable(
-                name: "OrganizationAddress");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -341,6 +356,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Organizations");
+
+            migrationBuilder.DropTable(
+                name: "OrganizationAddress");
         }
     }
 }

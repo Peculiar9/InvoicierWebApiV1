@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20220324075046_newMigration")]
-    partial class newMigration
+    [Migration("20220404122720_InvoiceItemsTable")]
+    partial class InvoiceItemsTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -96,16 +96,36 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.Property<string>("Total")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("clientId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OrganizationId");
-
-                    b.HasIndex("clientId");
-
                     b.ToTable("Invoices");
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.InvoiceItems", b =>
+                {
+                    b.Property<int>("ItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ItemDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Title")
+                        .HasColumnType("float");
+
+                    b.HasKey("ItemId");
+
+                    b.ToTable("InvoiceItems");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>
@@ -114,6 +134,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -130,6 +153,8 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrganizationId");
+
+                    b.HasIndex("AddressId");
 
                     b.ToTable("Organizations");
                 });
@@ -164,9 +189,7 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
 
                     b.HasKey("AddressId");
 
-                    b.HasIndex("OrganizationId")
-                        .IsUnique()
-                        .HasFilter("[OrganizationId] IS NOT NULL");
+                    b.HasIndex("OrganizationId");
 
                     b.ToTable("OrganizationAddress");
                 });
@@ -376,28 +399,22 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Invoice", b =>
+            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>
                 {
-                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Organization", "Organization")
+                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.OrganizationAddress", "Address")
                         .WithMany()
-                        .HasForeignKey("OrganizationId")
+                        .HasForeignKey("AddressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Client", "client")
-                        .WithMany()
-                        .HasForeignKey("clientId");
-
-                    b.Navigation("client");
-
-                    b.Navigation("Organization");
+                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.OrganizationAddress", b =>
                 {
                     b.HasOne("InvoicierWebApiV1.Core.EntityModels.Organization", "Organization")
-                        .WithOne("Address")
-                        .HasForeignKey("InvoicierWebApiV1.Core.EntityModels.OrganizationAddress", "OrganizationId");
+                        .WithMany()
+                        .HasForeignKey("OrganizationId");
 
                     b.Navigation("Organization");
                 });
@@ -450,12 +467,6 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>
-                {
-                    b.Navigation("Address")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618

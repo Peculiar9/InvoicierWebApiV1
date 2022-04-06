@@ -19,10 +19,10 @@ namespace InvoicierWebApiV1.Infrastructure.Service
         {
             return _dbcontext.Organizations.ToList();
         }
-        public async Task<IEnumerable<OrganizationAddress>> GetOrganizationAddresses()
-        {
-            return _dbcontext.OrganizationsAddress.ToList();
-        }
+        //public async Task<IEnumerable<OrganizationAddress>> GetOrganizationAddresses()
+        //{
+        //    return _dbcontext.OrganizationsAddress.ToList();
+        //}
         public async Task<Organization> GetOrganizationById(int id)
         {
             return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
@@ -58,11 +58,7 @@ namespace InvoicierWebApiV1.Infrastructure.Service
 
         public async Task UpdateOrganization(Organization Organization)
         {
-            if (Organization == null)
-            {
-                throw new ArgumentNullException("No input, hence no changes", nameof(Organization.Name));
-            }
-           await _dbcontext.AddAsync(Organization);
+           //Nothing
         }
     
             

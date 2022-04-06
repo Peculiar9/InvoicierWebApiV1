@@ -20,7 +20,7 @@ namespace InvoicierWebApiV1.Services
         {
             
            
-            return ((IEnumerable<Invoice>)_context.Invoices).ToList();
+            return _context.Invoices.ToList();
         }
         public async Task CreateInvoice(Invoice model)
         { 

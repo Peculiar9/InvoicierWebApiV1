@@ -23,16 +23,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             _service = organizationService;
             _mapper = mapper;
         }
-        public Task<bool> CreateOrganization()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteOrganization(string organizationId)
-        {
-            throw new NotImplementedException();
-        }
-            
+     
 
         public async Task<Response> GetOrganizations()
         {
@@ -45,14 +36,16 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
          
             var clients = new List<ClientReadDto>();
             var address = new OrganizationAddress();
+               
             if (organizations.ToList().Count < 1) 
-                return new Response().failed("Failed");
+                return new Response().success(" ", new object());
             organizations.ToList().ForEach(x => {
                 clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == x.OrganizationId).ToList();
                 address = x.Address;
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });
             var response = new List<OrganizationReadDto>();
+            
             response.AddRange(organizationsList);
             return new Response().success("Successful", response);
             }
@@ -61,14 +54,93 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 return new Response().failed(err.Message);
             }
         }
-        
-        public Task<bool> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+                
+        public async Task<Response> GetOrganizationById(int id)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+            var message = "";
+            try
+            {
+                var organizationItem = await _service.GetOrganizationById(id);
+                var clients = new List<ClientReadDto>();
+                var clientsFromList = await _clientService.GetClients();
+                var clientsfromService = _mapper.Map<List<ClientReadDto>>(clientsFromList);
+                if (organizationItem == null) return response.failed("Organization does not exist");
+                clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == organizationItem.OrganizationId).ToList();
+                var organization = new OrganizationReadDto(organizationItem, clients, organizationItem.Address);
+                if (organizationItem != null)
+                {
+                    return response.success("successful request", organization);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+            }
+            return response.failed($"failed request: {message}");
+         } 
+           
+        public async Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto)
+        {
+            try
+            {
+            var response = new Response();
+            var organizationModel = _mapper.Map<Organization>(organizationWriteDto);
+            await _service.CreateOrganization(organizationModel);
+            var organizationReadDto = _mapper.Map<OrganizationReadDto>(organizationModel); ;
+            response.Data = organizationReadDto ?? new object();
+                if (_service.SaveChanges()) response.StatusCode = 200; return response;
+        
+            }
+            catch (Exception ex)
+            {
+                return new Response().failed(ex.InnerException.ToString(), null , ResponseType.ServerError);
+                throw;
+            }
+            return new Response().failed($"Unable to save {organizationWriteDto.Name} try again later", null, ResponseType.ServerError);
         }
+        public async Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+        {
+            Response response = new Response();
+            var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+            if (organizationFromRepo == null)
+            {
+                return response.failed("Not Found");
+            }
+            _mapper.Map(organizationModel, organizationFromRepo);
+            await _service.UpdateOrganization(organizationFromRepo);
+            if (_service.SaveChanges()) return new Response().success("Successful Request", organizationId);
+            else
+            {
+                return new Response().failed("Not Successful");
+            }
+
+        }
+        public async Task<Response> DeleteOrganization(int organizationId)
+        {
+            Response response = new Response();
+            try
+            {
+                var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+                if (organizationFromRepo == null)
+                {
+                    return response.failed("Organization Not Found", ResponseType.NotFound);
+                }
+                
+                await _service.DeleteOrganization(organizationFromRepo);
+                if (!_service.SaveChanges()) return response.failed("Not deleted successful try again!!", ResponseType.ServerError); 
+                return response.success("Successfully deleted");
+            }
+            catch(Exception ex) { return response.failed(ex.Message, ResponseType.ServerError); };
+        }
+            
+        
+      
 
        
     }
-    
-  
 }
+    
+
+  

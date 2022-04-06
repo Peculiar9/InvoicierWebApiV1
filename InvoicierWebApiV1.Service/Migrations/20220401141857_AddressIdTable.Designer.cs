@@ -4,14 +4,16 @@ using InvoicierWebApiV1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    partial class InvoicierDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220401141857_AddressIdTable")]
+    partial class AddressIdTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,9 +65,6 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -97,38 +96,16 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.Property<string>("Total")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("clientId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("OrganizationId");
+
+                    b.HasIndex("clientId");
+
                     b.ToTable("Invoices");
-                });
-
-            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.InvoiceItems", b =>
-                {
-                    b.Property<int>("ItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("InvoiceId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ItemDescription")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ItemId");
-
-                    b.HasIndex("InvoiceId");
-
-                    b.ToTable("InvoiceItems");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>
@@ -402,15 +379,21 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.InvoiceItems", b =>
+            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Invoice", b =>
                 {
-                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Invoice", "Invoice")
+                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Organization", "Organization")
                         .WithMany()
-                        .HasForeignKey("InvoiceId")
+                        .HasForeignKey("OrganizationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Invoice");
+                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Client", "client")
+                        .WithMany()
+                        .HasForeignKey("clientId");
+
+                    b.Navigation("client");
+
+                    b.Navigation("Organization");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>

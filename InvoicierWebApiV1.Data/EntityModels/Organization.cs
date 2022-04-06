@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InvoicierWebApiV1.Core.EntityModels
 {
     public class Organization
     {
-        [Key]
         public int OrganizationId { get; set; }
         [Required]
         public string Name { get; set; }
@@ -16,6 +16,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
         public string ImageLogo { get; set; }
 
         [Required]
+        [ForeignKey("AddressId")]
         public virtual OrganizationAddress Address { get; set; }
 
 

@@ -53,7 +53,7 @@ namespace InvoicierWebApiV1.Controllers
              if(clientModel != null){
                  return Ok( new Response{
                      Status = "Successful",
-                     Message = $"{clientModel.FirstName} User Created Succesfully"
+                     Message = $"{clientModel.FirstName} User Created Successfully"
                  });
              }
              return NotFound();

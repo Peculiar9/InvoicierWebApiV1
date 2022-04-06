@@ -25,7 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\Response\" />
-    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>
