@@ -46,7 +46,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
         public int ClientId { get; set; }
         public string Total { get; set; }
         [ForeignKey("Organization")]
-        public int OrganizationId { get; set; }
+        public int OrganizationId { get; private set; }
     }
 }
 

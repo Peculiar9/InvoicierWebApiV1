@@ -58,7 +58,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
         }
 
         public async Task<Response> CreateInvoice(int clientId, InvoiceCreateDto invoiceModel)
-        {
+            {
             Response response = new Response();
             var message = "";
             if (invoiceModel == null)
@@ -71,7 +71,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
                 invoiceMapped.InvoiceNumber = InvoiceNumberGenerate();
                 var client = await _clientService.GetClientsById(clientId);
                 var invoiceItems = _mapper.Map<List<InvoiceItems>>(invoiceModel.Items);
-                invoiceMapped.OrganizationId = client.OrganizationId;
+                //invoiceMapped.OrganizationId = client.OrganizationId;
                 await _services.CreateInvoice(invoiceMapped);
                 await _invoiceItemService.CreateInvoiceItems(invoiceItems);
                 if (_services.SaveChanges())
@@ -80,6 +80,7 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
             catch (Exception ex)
             {
+
                 message = ex.Message ?? ex.InnerException.Message;
                 throw;
             }

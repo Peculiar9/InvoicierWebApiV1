@@ -86,7 +86,14 @@ namespace InvoicierWebApiV1
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddSwaggerGen(c =>
              {
-                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvoicierWebApiV1", Version = "v1" });
+                 c.SwaggerDoc("v1", new OpenApiInfo { 
+                     Title = "InvoicierWebApiV1", Version = "v1", 
+                     Contact = new OpenApiContact 
+                     { 
+                         Name = "Peculiar Babalola", 
+                         Email = "peculiarbabalola@gmail.com", 
+                         Url = new Uri("https://peculiarbabalola.netlify.app"), 
+                     } });
                  var securityScheme = new OpenApiSecurityScheme
                  {
                      Name = "JWT Authentication",
@@ -117,7 +124,14 @@ namespace InvoicierWebApiV1
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvoicierWebApiV1 v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvoicierWebApiV1 v1");
+                c.RoutePrefix = string.Empty;
+                }
+                
+                
+                ) ;
 
 
             }
@@ -135,3 +149,4 @@ namespace InvoicierWebApiV1
         }
     }
 }
+
