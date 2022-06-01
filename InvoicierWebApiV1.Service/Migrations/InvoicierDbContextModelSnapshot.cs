@@ -78,6 +78,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.Property<string>("Discount")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EmailAddress")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("ExpiredOn")
                         .HasColumnType("datetime2");
 
@@ -155,6 +158,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("OrganizationId");
 
                     b.HasIndex("AddressId");
@@ -215,6 +221,12 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");

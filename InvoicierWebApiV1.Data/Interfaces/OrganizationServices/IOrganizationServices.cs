@@ -6,9 +6,10 @@ namespace InvoicierWebApiV1.Core.Interfaces.OrganizationServices
 {
     public interface IOrganizationServices
     {
-        Task<IEnumerable<Organization>> GetOrganizations();
+        Task<IEnumerable<Organization>> GetOrganizations(string id);
+        Task<IEnumerable<Organization>> GetAllOrganizations();
         //Task<IEnumerable<OrganizationAddress>> GetOrganizationAddresses();
-        Task<Organization> GetOrganizationById(int id);
+        Task<Organization> GetOrganizationById(string userid, int id);
         Task CreateOrganization(Organization Organization);
         Task UpdateOrganization(Organization Organization);
         Task DeleteOrganization(Organization Organization);

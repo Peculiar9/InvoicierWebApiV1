@@ -2,8 +2,10 @@
 using InvoicierWebApiV1.Core.Dtos;
 using InvoicierWebApiV1.Core.Interfaces.OrganizationServices;
 using InvoicierWebApiV1.Core.Interfaces.UseCases;
+using InvoicierWebApiV1.Data.AuthModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -20,61 +22,63 @@ namespace InvoicierWebApiV1.Controllers
         private readonly IOrganizationUsecase _service;
         private readonly IWebHostEnvironment _webhost;
         private readonly IOrganizationServices _dbService;
-        public OrganizationController(IOrganizationUsecase services, IMapper mapper, IWebHostEnvironment webHostEnvironment, IOrganizationServices dbService)
+        private readonly UserManager<ApplicationUser> userManager;
+
+        public OrganizationController(IOrganizationUsecase services, IMapper mapper, IWebHostEnvironment webHostEnvironment, IOrganizationServices dbService, UserManager<ApplicationUser> userManager)
         {
             _mapper = mapper;
             _service = services;
             _dbService = dbService;
             this._webhost = webHostEnvironment;
+            this.userManager = userManager;
         }
 
-        // GET 
-        [HttpGet("")]
-        public async Task<IActionResult> Index()
+        [HttpGet, Route("get-all")]
+        public async Task<IActionResult> Organization()
         {
-            var response = await _service.GetOrganizations();
-            if (response.StatusCode != 200)
-              return BadRequest(response);
-            response.Message = "No existing Organization Please Add";
-            return Ok(response);
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var item = await _service.GetOrganizations(user.Id);
+            return Ok(item);
+        } 
+        [HttpGet]
+        public async Task<IActionResult> Organizations()
+        {
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var item = await _service.GetOrganizations(user.Id);
+            return Ok(item);
         }
-
-
+       
+              
         [HttpGet]
         [Route("{id}", Name = "OrganizationById")]
         public async Task<IActionResult> OrganizationById(int id)
         {
-            var item = await _service.GetOrganizations();
-            if (item.StatusCode == 200)
-            {
-                var org = await _service.GetOrganizationById(id);
-                
-                return Ok(org);
-            }
-            return NotFound();
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var org = await _service.GetOrganizationById(user.Id, id);
+            return Ok(org);
         }
+
         
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateOrganization(OrganizationWriteDto organizationWriteDto)
         {
-            var response = await _service.CreateOrganization(organizationWriteDto);        
+            var user =await  userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var response = await _service.CreateOrganization(organizationWriteDto, user.Id);        
             if (response.StatusCode == 200)
             {
-                return Created(nameof(OrganizationById), (OrganizationReadDto)response.Data);
+                return Created(nameof(OrganizationById), response);
             }
             response.Message = "Could not save Organization try again later.";
             return BadRequest(response);
         }
 
-
-
-
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> Update(int id, OrganizationUpdateDto updateDto)
         {
-           var response =  await _service.UpdateOrganization(id, updateDto);
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var response =  await _service.UpdateOrganization(user.Id, id, updateDto);
             if (response.StatusCode == 404)
             {
                 return NotFound();
@@ -109,7 +113,8 @@ namespace InvoicierWebApiV1.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var response = await _service.DeleteOrganization(id);
+            var user = await userManager.FindByNameAsync(HttpContext.User.Identity.Name);
+            var response = await _service.DeleteOrganization(user.Id, id);
                 return Ok(response);
         }
      }

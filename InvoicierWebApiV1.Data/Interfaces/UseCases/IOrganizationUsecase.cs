@@ -7,11 +7,12 @@ namespace InvoicierWebApiV1.Core.Interfaces.UseCases
 {
     public interface IOrganizationUsecase
     {
-        Task<Response> GetOrganizations();
-        Task<Response> GetOrganizationById(int id);
-        Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto);
-        Task<Response> DeleteOrganization(int organizationId);
-        Task<Response> UpdateOrganization(int id, OrganizationUpdateDto organizationModel);
+        Task<Response> GetAllOrganizations();
+        Task<Response> GetOrganizations(string userId);
+        Task<Response> GetOrganizationById(string userid, int id);
+        Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto, string userId);
+        Task<Response> DeleteOrganization(string userid, int organizationId);
+        Task<Response> UpdateOrganization(string userid, int id, OrganizationUpdateDto organizationModel);
         
     }
 }

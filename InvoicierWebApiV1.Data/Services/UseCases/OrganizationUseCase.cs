@@ -24,24 +24,50 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             _mapper = mapper;
         }
      
-
-        public async Task<Response> GetOrganizations()
+        
+        public async Task<Response> GetAllOrganizations()
         {
             try
             {
-            var organizations = await _service.GetOrganizations();
+            var organizations = await _service.GetAllOrganizations();
             var organizationsList = new List<OrganizationReadDto>();
-            var client = await _clientService.GetClients();
-            var clientsfromService = _mapper.Map<List<ClientReadDto>>(client);
          
             var clients = new List<ClientReadDto>();
             var address = new OrganizationAddress();
                
             if (organizations.ToList().Count < 1) 
-                return new Response().success(" ", new object());
-            organizations.ToList().ForEach(x => {
-                clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == x.OrganizationId).ToList();
-                address = x.Address;
+                return new Response().success("Add Organization", new object());
+
+            organizations.ToList().ForEach(async x => {
+                var clientFromService = await _clientService.GetClientByOrgId(x.OrganizationId);
+                clients = _mapper.Map<List<ClientReadDto>>(clientFromService);
+                organizationsList.Add(new OrganizationReadDto(x, clients, address));
+            });
+            var response = new List<OrganizationReadDto>();
+            
+            response.AddRange(organizationsList);
+            return new Response().success("Successful", response);
+            }
+            catch (Exception err)
+            {
+                return new Response().failed(err.Message);
+            }
+        }  public async Task<Response> GetOrganizations(string userId)
+        {
+            try
+            {
+            var organizations = await _service.GetOrganizations(userId);
+            var organizationsList = new List<OrganizationReadDto>();
+         
+            var clients = new List<ClientReadDto>();
+            var address = new OrganizationAddress();
+               
+            if (organizations.ToList().Count < 1) 
+                return new Response().success("Add Organization", new object());
+
+            organizations.ToList().ForEach(async x => {
+                var clientFromService = await _clientService.GetClientByOrgId(x.OrganizationId);
+                clients = _mapper.Map<List<ClientReadDto>>(clientFromService);
                 organizationsList.Add(new OrganizationReadDto(x, clients, address));
             });
             var response = new List<OrganizationReadDto>();
@@ -55,18 +81,17 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
         }
                 
-        public async Task<Response> GetOrganizationById(int id)
+        public async Task<Response> GetOrganizationById(string userId, int id)
         {
             var response = new Response();
             var message = "";
             try
             {
-                var organizationItem = await _service.GetOrganizationById(id);
+                var organizationItem = await _service.GetOrganizationById(userId, id);
                 var clients = new List<ClientReadDto>();
-                var clientsFromList = await _clientService.GetClients();
-                var clientsfromService = _mapper.Map<List<ClientReadDto>>(clientsFromList);
                 if (organizationItem == null) return response.failed("Organization does not exist");
-                clients = clientsfromService.ToList().Select(client => client).Where(org => org.OrganizationId == organizationItem.OrganizationId).ToList();
+                var clientsFromList = await _clientService.GetClientByOrgId(id);
+                clients = _mapper.Map<List<ClientReadDto>>(clientsFromList);
                 var organization = new OrganizationReadDto(organizationItem, clients, organizationItem.Address);
                 if (organizationItem != null)
                 {
@@ -81,29 +106,31 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             return response.failed($"failed request: {message}");
          } 
            
-        public async Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto)
+        public async Task<Response> CreateOrganization(OrganizationWriteDto organizationWriteDto, string userId)
         {
+            var response = new Response();
             try
             {
-            var response = new Response();
-            var organizationModel = _mapper.Map<Organization>(organizationWriteDto);
-            await _service.CreateOrganization(organizationModel);
-            var organizationReadDto = _mapper.Map<OrganizationReadDto>(organizationModel); ;
-            response.Data = organizationReadDto ?? new object();
-                if (_service.SaveChanges()) response.StatusCode = 200; return response;
-        
+                var organizationModel = _mapper.Map<Organization>(organizationWriteDto);
+                organizationModel.UserId = userId;
+                await _service.CreateOrganization(organizationModel);
+                var organizationReadDto = _mapper.Map<OrganizationReadDto>(organizationModel); ;
+                response.Data = organizationReadDto ?? new object();
+                if (!_service.SaveChanges())
+                    return response.failed($"Organization {organizationWriteDto.Name} was not saved successfully");
+
             }
             catch (Exception ex)
             {
-                return new Response().failed(ex.InnerException.ToString(), null , ResponseType.ServerError);
-                throw;
+                return new Response().failed(ex.Message, null, ResponseType.ServerError);
             }
-            return new Response().failed($"Unable to save {organizationWriteDto.Name} try again later", null, ResponseType.ServerError);
+            return response.success("Organization saved successfully!!!"); 
         }
-        public async Task<Response> UpdateOrganization(int organizationId, OrganizationUpdateDto organizationModel)
+
+        public async Task<Response> UpdateOrganization(string userid, int organizationId, OrganizationUpdateDto organizationModel)
         {
             Response response = new Response();
-            var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+            var organizationFromRepo = await _service.GetOrganizationById(userid, organizationId);
             if (organizationFromRepo == null)
             {
                 return response.failed("Not Found");
@@ -117,12 +144,12 @@ namespace InvoicierWebApiV1.Core.Services.UseCases
             }
 
         }
-        public async Task<Response> DeleteOrganization(int organizationId)
+        public async Task<Response> DeleteOrganization(string userid, int organizationId)
         {
             Response response = new Response();
             try
             {
-                var organizationFromRepo = await _service.GetOrganizationById(organizationId);
+                var organizationFromRepo = await _service.GetOrganizationById(userid, organizationId);
                 if (organizationFromRepo == null)
                 {
                     return response.failed("Organization Not Found", ResponseType.NotFound);

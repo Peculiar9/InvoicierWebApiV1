@@ -2,23 +2,22 @@
 
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
-    public partial class InvoiceWithClientIdAsFK : Migration
+    public partial class newOrganizationModelMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "ClientId",
-                table: "Invoices",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.AddColumn<string>(
+                name: "UserId",
+                table: "Organizations",
+                type: "nvarchar(max)",
+                nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "ClientId",
-                table: "Invoices");
+                name: "UserId",
+                table: "Organizations");
         }
     }
 }

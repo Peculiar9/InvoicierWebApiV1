@@ -10,7 +10,6 @@ namespace InvoicierWebApiV1.Core.Dtos
 
         [Required]
         public string Email { get; set; }
-        public int PostalCode { get; set; }
         public string ImageLogo { get; set; }
         
         public virtual OrganizationWriteDtoAddress Address { get; set; }

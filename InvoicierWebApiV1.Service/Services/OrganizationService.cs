@@ -15,17 +15,21 @@ namespace InvoicierWebApiV1.Infrastructure.Service
         {
             _dbcontext = dbContext;
         }
-        public async Task<IEnumerable<Organization>> GetOrganizations()
+        public async Task<IEnumerable<Organization>> GetOrganizations(string id)
         {
-            return _dbcontext.Organizations.ToList();
+            return _dbcontext.Organizations.Where(d => d.UserId == id);
         }
         //public async Task<IEnumerable<OrganizationAddress>> GetOrganizationAddresses()
         //{
         //    return _dbcontext.OrganizationsAddress.ToList();
         //}
-        public async Task<Organization> GetOrganizationById(int id)
+        public async Task<IEnumerable<Organization>> GetAllOrganizations()
         {
-            return _dbcontext.Organizations.FirstOrDefault(p => p.OrganizationId == id);
+            return _dbcontext.Organizations;
+        }
+        public async Task<Organization> GetOrganizationById(string userId, int id)
+        {
+            return _dbcontext.Organizations.Where(p => p.OrganizationId == id && p.UserId == userId).First();
         }
 
         public async Task CreateOrganization(Organization Organization)

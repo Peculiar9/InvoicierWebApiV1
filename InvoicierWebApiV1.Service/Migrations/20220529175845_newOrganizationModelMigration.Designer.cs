@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InvoicierWebApiV1.Infrastructure.Migrations
 {
     [DbContext(typeof(InvoicierDbContext))]
-    [Migration("20220404122720_InvoiceItemsTable")]
-    partial class InvoiceItemsTable
+    [Migration("20220529175845_newOrganizationModelMigration")]
+    partial class newOrganizationModelMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -65,6 +65,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
@@ -75,6 +78,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Discount")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ExpiredOn")
@@ -120,10 +126,12 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<double>("Title")
-                        .HasColumnType("float");
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ItemId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.ToTable("InvoiceItems");
                 });
@@ -150,6 +158,9 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrganizationId");
@@ -212,6 +223,12 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -397,6 +414,17 @@ namespace InvoicierWebApiV1.Infrastructure.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens");
+                });
+
+            modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.InvoiceItems", b =>
+                {
+                    b.HasOne("InvoicierWebApiV1.Core.EntityModels.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("InvoicierWebApiV1.Core.EntityModels.Organization", b =>
