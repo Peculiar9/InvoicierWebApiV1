@@ -53,17 +53,18 @@ namespace InvoicierWebApiV1.Controllers
                 }
                 var role = new IdentityRole();
                 role.Name = UserRoles.User;
+                role.Id = Guid.NewGuid().ToString();
                 ApplicationUser user = new ApplicationUser()
                 {
                     Email = model.Email,
                     SecurityStamp = Guid.NewGuid().ToString(),
                     UserName = model.UserName,
                     EmailConfirmed = true,
-                    UserRoleId = role.Id                    
+                    UserRoleId = role.Id,
+                    
                 };
 
                 var result = await userManager.CreateAsync(user, model.Password);
-
 
                 if (!result.Succeeded)
                 {
@@ -86,11 +87,11 @@ namespace InvoicierWebApiV1.Controllers
             }
             catch (System.Exception)
             {
-                
                 throw;
             }
             // return Ok(); 
         }
+        
         [AllowAnonymous]
         [Route("login")]
         [HttpPost]
@@ -131,6 +132,7 @@ namespace InvoicierWebApiV1.Controllers
                 }); 
             }
 
+                
             var responseMessage = "";
                 if (!passwordCheck)
                 {

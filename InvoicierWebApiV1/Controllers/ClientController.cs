@@ -24,9 +24,17 @@ namespace InvoicierWebApiV1.Controllers
         [Route("")]
          public async Task<IActionResult> Index()
          {
+            try
+            {
              var clients = await _service.GetClients();
              return Ok(clients);
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(new Response {  Message = ex.Message, Status = "Service Error"});
+            }
          }
+
 
         [HttpGet]
         [Route("{id}")]
@@ -37,7 +45,7 @@ namespace InvoicierWebApiV1.Controllers
             {
               return Ok(clients);
             }
-            return NotFound(new Response { Message = "Client not found", Status="Null Request" });
+            return NotFound(new Response { Message = "Client not found", Status="Null Request" });  
 
 
         }
@@ -53,10 +61,10 @@ namespace InvoicierWebApiV1.Controllers
              if(clientModel != null){
                  return Ok( new Response{
                      Status = "Successful",
-                     Message = $"{clientModel.FirstName} User Created Successfully"
+                     Message = $"{clientModel.FirstName} Client Created Successfully"
                  });
              }
-             return NotFound();
+             return BadRequest();
          } 
     }
 }

@@ -14,6 +14,7 @@ namespace InvoicierWebApiV1.Core.EntityModels
         public string Email { get; set; }
         //public string PostalCode { get; set; }
         public string ImageLogo { get; set; }
+        public string UserId { get; set; }
 
         [Required]
         [ForeignKey("AddressId")]

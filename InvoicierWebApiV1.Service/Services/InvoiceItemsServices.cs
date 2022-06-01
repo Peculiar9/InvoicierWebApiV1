@@ -16,30 +16,27 @@ namespace InvoicierWebApiV1.Infrastructure.Services
         {
             _context = context;
         }
+            
         public async Task<IEnumerable<InvoiceItems>> GetInvoiceItems()
         {
             var invoiceItems = new List<InvoiceItems>();
-            try
-            {
-                invoiceItems = _context.InvoiceItems.ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Something Happened {ex}");
-            }
+            invoiceItems = _context.InvoiceItems.ToList();
             return invoiceItems;
         }
-
+                    
         public async Task<InvoiceItems> GetInvoiceItemsByID(int id)
         {
+            if (id <= 0) throw new Exception("Provide valid id");
             return _context.InvoiceItems.FirstOrDefault(x => x.ItemId == id);
         }
 
         public async Task<IEnumerable<InvoiceItems>> GetInvoiceItemsByInvoiceId(int invoiceId)
         {
-            var invoiceItme  = new List<InvoiceItems>();
-            invoiceItme = _context.InvoiceItems.ToList().Select(invoice => invoice).Where(inv => inv.InvoiceId == invoiceId).ToList();
-            return invoiceItme;
+            if (invoiceId <= 0) throw new Exception("Provide valid id");
+            var invoiceItem  = new List<InvoiceItems>();
+            invoiceItem = _context.InvoiceItems.ToList().FindAll(x => x.InvoiceId == invoiceId);
+            if (invoiceItem.Count < 1) throw new Exception("Invoice does not have an item attached to it");
+            return invoiceItem;
         }
         public async Task CreateInvoiceItems(List<InvoiceItems> invoiceItems)
         {

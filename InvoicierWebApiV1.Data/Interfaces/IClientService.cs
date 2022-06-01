@@ -9,6 +9,7 @@ namespace InvoicierWebApiV1.Core.Interfaces
          Task<bool> SaveChanges();
          Task<IEnumerable<Client>> GetClients();
          Task<Client> GetClientsById(int id);
+         Task<IEnumerable<Client>> GetClientByOrgId(int id);
          Task RemoveClient(Client clientModel);
          Task CreateClient(Client clientModel);
     }

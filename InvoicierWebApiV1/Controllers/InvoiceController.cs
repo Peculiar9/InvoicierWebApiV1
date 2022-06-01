@@ -61,8 +61,8 @@ namespace InvoicierWebApiV1.Controllers
             var response = await _service.CreateInvoice(clientId, invoiceModelDto);
             var data = invoiceModelDto;
              if(response.StatusCode == 200) return Created(nameof(clientId), data);
-            if (!string.IsNullOrEmpty(((InvoiceCreateDto)response.Data).Email)) 
-                await _service.MailInvoices(((InvoiceCreateDto)response.Data).Email);
+            //if (!string.IsNullOrEmpty(((InvoiceCreateDto)response.Data).Email)) 
+            //    await _service.MailInvoices(((InvoiceCreateDto)response.Data).Email);
             return BadRequest(response);    
         }
 

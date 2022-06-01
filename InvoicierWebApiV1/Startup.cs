@@ -41,7 +41,9 @@ namespace InvoicierWebApiV1
             });
 
             var configString = Configuration.GetConnectionString("InvoicierConnection");
-            services.AddDbContext<InvoicierDbContext>(options => 
+            var sqliteDbCon = Configuration.GetConnectionString("InvoicierSqlite");
+            services.AddDbContext<InvoicierDbContext>(options =>
+            //options.UseSqlite(sqliteDbCon));
             options.UseSqlServer(configString));
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
